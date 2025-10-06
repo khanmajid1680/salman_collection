@@ -1,0 +1,15 @@
+const loc        = window.location;
+const base_url   = loc.protocol + "//" + loc.host + "/" + loc.pathname.split('/')[1];
+const SUPPLIER   = 'SUPPLIER';
+const CUSTOMER   = 'CUSTOMER';
+const GENERAL    = 'GENERAL';
+const TO_PAY     = 'TO PAY';
+const TO_RECEIVE = 'TO RECEIVE' ;
+const CASH 		 = 1 ;
+const BANK 		 = 2 ;
+const DEBIT_NOTE = 3 ;
+const CREDIT_NOTE= 4 ;
+const WALKIN 	 = 5 ;
+const RELOAD_TIME= 800;
+const DEFAULT_ACCOUNT = [1, 2, 3, 4, 5];
+const ADMIN 	= 'ADMIN';

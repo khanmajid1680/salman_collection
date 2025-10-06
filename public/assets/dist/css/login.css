@@ -1,0 +1,34 @@
+.login_wrapper{
+	background-color: rgba(0, 0, 0, 0.4);
+}
+.logo{
+	/*border:1px solid #000;*/
+}
+.login_form{
+	/*border:1px solid #000;*/
+}
+.bg_image{
+	height:100vh; 
+	background-image:url('../images/bg-image.jpg'); 
+	background-repeat: no-repeat; 
+	background-size: cover; 
+	background-position: center;
+}
+
+/* Landscape phones and portrait tablets */
+@media (max-width: 767px) {
+
+          .bg_image {
+        background-image: none;
+    }
+
+}
+
+/* Portrait phones and smaller */
+@media (max-width: 480px) {
+
+          .bg_image {
+        background-image: none;
+    }
+
+}
