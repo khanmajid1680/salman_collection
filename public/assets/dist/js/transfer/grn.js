@@ -28,7 +28,6 @@ const bulk_receive_data = () =>{
             let id = $('#outward_material_wrapper tr:nth-child('+i+')').attr('id');
             let lastunderscore = id.lastIndexOf("_");
             let cnt = id.substring(lastunderscore+1);
-           
             if(!$(`#received_status_${cnt}`).is(':checked')){
                 $(`#received_status_${cnt}`).bootstrapToggle('on');
             }

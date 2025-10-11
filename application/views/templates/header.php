@@ -319,6 +319,9 @@
 							          		</a>
 							          		<?php endif; ?>
 							          		<?php if($role == SUPER_ADMIN || $role == ADMIN): ?>
+							          		<a id="ca_report" class="dropdown-item my-2" href="<?php echo base_url('report/ca_report?action=view'); ?>">CA REPORT</a>
+							          		<?php endif; ?>
+							          		<?php if($role == SUPER_ADMIN || $role == ADMIN): ?>
 								          		<a id="trial_report" class="dropdown-item my-2" href="<?php echo base_url('report/trial_report?action=view'); ?>">
 								          			ALTER REPORT
 								          		</a>

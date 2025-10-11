@@ -131,92 +131,22 @@ class Brand extends CI_Controller{
 		echo json_encode($json);
 	}
 
-	// public function temp_function1(){  
+	
+
+	// public function temp_function(){  
 	// 	$this->db->trans_begin();
-	// 	$temp = $this->db_operations->get_record('purchase_master', ['pm_branch_id !='=>1]);
+	// 	$temp = $this->db_operations->get_recordlist('outward_trans');
+	// 	$resp =[];
 	// 	if(!empty($temp)){
 	// 		foreach ($temp as $key => $value) {
-	// 			$data['pm_entry_no'] 	= $this->db_operations->get_fin_year_branch_max_id('purchase_master', 'pm_entry_no', 'pm_fin_year', $_SESSION['fin_year'], 'pm_branch_id', 3);
-	// 			$data['pm_branch_id'] = 3;
-
-	// 			if($this->db_operations->data_update('purchase_master', $data,'pm_id',$value['pm_id']) < 1){
-	// 				$this->db->trans_rollback();
-	// 				echo 'PURCHASE NOT UPDATED';
-	// 			 	return;
+	// 			$temp = $this->db_operations->get_record('barcode_master',['bm_id'=>$value['ot_bm_id']]);
+	// 			if(empty($temp)){
+	// 				array_push($resp, $value['ot_bm_id']);
 	// 			}
-	// 			$bm_data = $this->db_operations->get_record('barcode_master', ['bm_pm_id'=>$value['pm_id']]);
-	// 			if(!empty($bm_data)){
-	// 				if($bm_data[0]['bm_branch_id']>0){
-	// 					if($this->db_operations->data_update('barcode_master',['bm_branch_id'=>3],'bm_pm_id',$value['pm_id']) < 1){
-	// 						$this->db->trans_rollback();
-	// 						echo 'BARCODE NOT UPDATED';
-	// 					 	return;
-	// 					}
-	// 				}
-	// 			}
-	// 		}
 	// 	}
-	// 	if ($this->db->trans_status() === FALSE){
-	// 	    $this->db->trans_rollback();
-	// 	    ['status' => true, 'flag' => 0, 'data' => [], 'msg' => 'Data not Updated'];
-	// 		return;
-	//     }
-	//     $this->db->trans_commit();
-
-	//     echo 1;
-	// }
-
-	// public function temp_function2(){  
-	// 	$this->db->trans_begin();
-	// 	$temp = $this->db_operations->get_record('outward_master', ['om_branch !='=>1,'om_branch !='=>3]);
-	// 	if(!empty($temp)){
-	// 		foreach ($temp as $key => $value) {
-	// 			$data['om_entry_no'] = $this->db_operations->get_fin_year_branch_max_id('outward_master', 'om_entry_no', 'om_fin_year', $_SESSION['fin_year'],'om_branch_id',1);
-	// 			$data['om_branch'] = 3;
-	// 			if($this->db_operations->data_update('outward_master', $data,'om_id',$value['om_id']) < 1){
-	// 				$this->db->trans_rollback();
-	// 				echo 'OUTWARD NOT UPDATED';
-	// 			 	return;
-	// 			}
-				
-	// 		}
-	// 	}
-	// 	if ($this->db->trans_status() === FALSE){
-	// 	    $this->db->trans_rollback();
-	// 	    ['status' => true, 'flag' => 0, 'data' => [], 'msg' => 'Data not Updated'];
-	// 		return;
-	//     }
-	//     $this->db->trans_commit();
-
-	//     echo 1;
-	// }
-
-	// public function temp_function3(){  
-	// 	$this->db->trans_begin();
-	// 	$temp = $this->db_operations->get_record('grn_master', ['gm_branch_id !='=>1,'gm_branch_id !='=>3]);
-	// 	if(!empty($temp)){
-	// 		foreach ($temp as $key => $value) {
-				
-	// 			$data['gm_entry_no'] = $this->db_operations->get_fin_year_branch_max_id('grn_master', 'gm_entry_no', 'gm_fin_year', $_SESSION['fin_year'], 'gm_branch_id',3);
-
-	// 			$data['gm_branch_id'] = 3;
-	// 			if($this->db_operations->data_update('grn_master', $data,'gm_id',$value['gm_id']) < 1){
-	// 				$this->db->trans_rollback();
-	// 				echo 'OUTWARD NOT UPDATED';
-	// 			 	return;
-	// 			}
-				
-	// 		}
-	// 	}
-	// 	if ($this->db->trans_status() === FALSE){
-	// 	    $this->db->trans_rollback();
-	// 	    ['status' => true, 'flag' => 0, 'data' => [], 'msg' => 'Data not Updated'];
-	// 		return;
-	//     }
-	//     $this->db->trans_commit();
-
-	//     echo 1;
-	// }
+		
+	// 	echo "<pre>"; ;print_r($resp);die;	
+	// }}
 
 
 }

@@ -28,9 +28,15 @@
                     FROM voucher_trans vt
                     WHERE vt.vt_pm_id = $id
                 ")->result_array();
+
+            $outward = $this->db->query("
+                    SELECT ot.ot_id
+                    FROM outward_trans ot
+                    WHERE ot.ot_pm_id = $id
+                ")->result_array();
             // echo "<pre>"; print_r($barcode);
             // echo "<pre>"; print_r($voucher);exit();
-            if(!empty($barcode) || !empty($voucher)) return true;
+            if(!empty($barcode) || !empty($voucher)  || !empty($outward)) return true;
 
 			return false;
 		}

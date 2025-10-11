@@ -53,6 +53,7 @@
                 $subsql .=" AND sm.sm_payment_mode = '".$_GET['sm_payment_mode']."'";
                 $record['search']['sm_payment_mode'] = $this->Commonmdl->get_mode($_GET['sm_payment_mode']);
             }
+            
 			$query ="
 						SELECT sm.*, 
 						(sm.sm_sgst_amt + sm.sm_cgst_amt + sm.sm_igst_amt) as gst_amt,
