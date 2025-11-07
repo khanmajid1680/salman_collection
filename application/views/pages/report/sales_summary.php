@@ -8,11 +8,13 @@
 	$to_qty 		= (isset($_GET['to_qty'])) ? $_GET['to_qty'] : "";
 	$from_bill_amt 	= (isset($_GET['from_bill_amt'])) ? $_GET['from_bill_amt'] : "";
 	$to_bill_amt 	= (isset($_GET['to_bill_amt'])) ? $_GET['to_bill_amt'] : "";
+	$_sale_type 	= (isset($_GET['_sale_type'])) ? $_GET['_sale_type'] : "";
+
 	$url 			= $_SERVER['QUERY_STRING'];
 ?>
 <script>
     let link 	= "report";
-    let sub_link= "sales_summary";
+    let sub_link= "sales_summary"; 
 </script>
 <section class="container-fluid sticky_top">
 	<form class="form-horizontal" id="search_form" action="<?php echo base_url('report/sales_summary?action=view')?>" method="get">
@@ -93,26 +95,16 @@
                     	<?php endif; ?>
                 	</select>
 				</div>
-				<div class="d-flex col-6 col-sm-6 col-md-4 col-lg-3">
-					<div class="floating-label">
-						<input type="number" class="form-control floating-input" id="from_qty" name="from_qty" value="<?php echo $from_qty ?>" placeholder=" " autocomplete="off"/>   
-	                    <label for="inputEmail3">FROM TOTAL QTY</label>
-					</div>
-					<div class="floating-label">
-						<input type="number" class="form-control floating-input" id="to_qty" name="to_qty" value="<?php echo $to_qty ?>" placeholder=" " autocomplete="off"/>   
-	                    <label for="inputEmail3">TO TOTAL QTY</label>
-					</div>
+				<div class="col-6 col-sm-4 col-md-3 col-lg-1 floating-label">
+					<p>TYPE</p>
+					<select class="form-control floating-select" id="_sale_type" name="_sale_type" onchange="trigger_search()">
+                    	<option value="">ALL</option>
+                    	<option value="0" <?php echo ($_sale_type=='0') ?'selected' : ''?>>GENERAL</option>
+                    	<option value="1" <?php echo ($_sale_type=='1') ?'selected' : ''?>>APPROVAL</option>
+                	</select>
 				</div>
-				<div class="d-flex col-6 col-sm-6 col-md-4 col-lg-3">
-					<div class="floating-label">
-						<input type="number" class="form-control floating-input" id="from_bill_amt" name="from_bill_amt" value="<?php echo $from_bill_amt ?>" placeholder=" " autocomplete="off"/>   
-	                    <label for="inputEmail3">FROM BILL AMT</label>
-					</div>
-					<div class="floating-label">
-						<input type="number" class="form-control floating-input" id="to_bill_amt" name="to_bill_amt" value="<?php echo $to_bill_amt ?>" placeholder=" " autocomplete="off"/>   
-	                    <label for="inputEmail3">TO BILL AMT</label>
-					</div>
-				</div>
+				
+				
 			</div>
 		</div>
 		<div class="row">
@@ -130,6 +122,7 @@
 					<tr>
 		                <th width="3%">#</th>
                         <th width="5%">BILL NO</th>
+                        <th width="5%">TYPE</th>
                         <th width="7%">BILL DATE</th>
                         <th width="10%">SALES PERSON</th>
                         <th width="10%">CUSTOMER</th>
@@ -149,6 +142,7 @@
                         <td ></td>
                         <td ></td>
                         <td ></td>
+                        <td ></td>
                         <td ><?php echo round($data['totals']['total_qty'], 0); ?></td>
                         <td ><?php echo round($data['totals']['sub_amt'], 2); ?></td>
                         <td ><?php echo round($data['totals']['disc_amt'], 2); ?></td>
@@ -162,10 +156,13 @@
 					<?php 
 						if(!empty($data['data'])):
 							foreach ($data['data'] as $key => $value):
+							$sale_type = ($value['sm_sales_type']>0) ? 'APPR' : 'GEN';
 					?>
 								<tr>
 									<td width="3%"><?php echo $key+1; ?></td>
 									<td width="5%"><?php echo $value['sm_bill_no']; ?></td>
+									<td width="5%"><?php echo $sale_type; ?></td>
+
 									<td width="7%"><?php echo date('d-m-Y', strtotime($value['sm_bill_date'])); ?></td>
 									<td width="10%"><?php echo strtoupper($value['user_fullname']); ?></td>
 									<td width="10%"><?php echo strtoupper($value['account_name']); ?></td>

@@ -51,7 +51,7 @@
 			}
 			return $record;
 		}
-		public function get_data($wantCount, $per_page = PER_PAGE, $offset = OFFSET){
+		public function get_data($wantCount,$menu, $per_page = PER_PAGE, $offset = OFFSET){
 			$record 	= [];
 			$subsql 	= '';
 			$limit  	= '';
@@ -62,6 +62,9 @@
 				$ofset .= " OFFSET $offset";
 			}
 			
+            $sales_type = ($menu=='sales') ? 0 : 1;
+            $subsql .=" AND sm.sm_sales_type = ".$sales_type;
+
 			if(isset($_GET['bill_no']) && !empty($_GET['bill_no'])){
                 $subsql .=" AND sm.sm_id = ".$_GET['bill_no'];
                 $record['search']['bill_no'] = $this->get_bill_no(['sm_id' => $_GET['bill_no']]);
@@ -112,18 +115,22 @@
                     $subsql .=" AND sm.sm_final_amt <= ".$_GET['to_bill_amt'];
                 }
             }
+
 			$query ="
-						SELECT sm.*, CONCAT(UPPER(acc.account_name), ' - ', acc.account_mobile) as account_name, user.user_fullname
+						SELECT sm.*, 
+                        CONCAT(UPPER(acc.account_name), ' - ', acc.account_mobile) as account_name,
+                        CONCAT(UPPER(sh_acc.account_name), ' - ', sh_acc.account_mobile) as shipping_account_name,
+                        user.user_fullname
 						FROM ".$this->master." sm
 						LEFT JOIN account_master acc ON(acc.account_id = sm.sm_acc_id)
-						LEFT JOIN user_master user ON(user.user_id = sm.sm_user_id)
+                        LEFT JOIN account_master sh_acc ON(sh_acc.account_id = sm.sm_shipping_acc_id)
+                        LEFT JOIN user_master user ON(user.user_id = sm.sm_user_id)
 						WHERE sm.sm_branch_id = ".$_SESSION['user_branch_id']."
                         AND sm.sm_fin_year = '".$_SESSION['fin_year']."'
 						$subsql
-						ORDER BY sm.sm_id DESC
+						ORDER BY sm.sm_id DESC 
 						$limit
-						$ofset
-					";
+						$ofset";
 			// echo "<pre>"; print_r($query); exit;
 			if($wantCount){
 				return $this->db->query($query)->num_rows();
@@ -138,26 +145,33 @@
 			return $record;
 		}
 
-        public function get_entry_no($sm_id, $sm_with_gst){ 
+        public function get_entry_no($sm_id, $sm_with_gst,$sales_type){    
             if(!empty($sm_id)){
                 $data = $this->db_operations->get_record('sales_master', ['sm_id' => $sm_id]);
-                if(!empty($data) && !empty($data[0]['sm_bill_no'])) return $data[0]['sm_bill_no'];
-            }
+                if(!empty($data)){
+                    if($data[0]['sm_sales_type']==0){
+                        if(!empty($data) && !empty($data[0]['sm_bill_no'])) return $data[0]['sm_bill_no'];
+                    }
+                }
+            } 
             $query="SELECT sm_bill_no as max_no
                     FROM sales_master
                     WHERE sm_with_gst = $sm_with_gst
+                    AND sm_sales_type = $sales_type
                     AND sm_branch_id = '".$_SESSION['user_branch_id']."'
                     AND sm_fin_year = '".$_SESSION['fin_year']."'
                     ORDER BY sm_bill_no DESC
                     LIMIT 1";
             // print_r($query);die;        
             $data = $this->db->query($query)->result_array();
-            $default = ($sm_with_gst>0)? '5785' : 1;
-            return empty($data) ? $default : ($data[0]['max_no']+1);
+            // $default = ($sm_with_gst>0)? '5785' : 1;
+            // return empty($data) ? $default : ($data[0]['max_no']+1);
+            return !empty($data) ? ($data[0]['max_no']+1) : 1;
+
         }
 
 		public function get_data_for_add(){
-			$record['sm_bill_no'] 	= $this->db_operations->get_order_fin_year_branch_max_id($this->master, 'sm_bill_no', 'sm_fin_year', $_SESSION['fin_year'], 'sm_branch_id', $_SESSION['user_branch_id'], 'sm_with_gst', 0);
+			$record['sm_bill_no'] 	= $this->db_operations->get_order_fin_year_branch_max_id($this->master, 'sm_bill_no', 'sm_fin_year', $_SESSION['fin_year'], 'sm_branch_id', $_SESSION['user_branch_id'], 'sm_with_gst', 0, 'sm_sales_type', 0);
             $record['walkin']       = $this->Accountmdl->get_record(['account_constant' => 'WALKIN', 'account_branch_id' => $_SESSION['user_branch_id']]);
 			$payment_modes 	        = $this->config->item('payment_mode');
             if(!empty($payment_modes)){
@@ -171,11 +185,18 @@
             // echo "<pre>"; print_r($record);exit;
 			return $record;
 		}
-		public function get_data_for_edit($sm_id){
+		public function get_data_for_edit($sm_id){ 
 			$master_query ="
-                            SELECT sm.*, acc.account_name, acc.account_mobile, user.user_fullname
+                            SELECT sm.*, 
+                            acc.account_name, acc.account_mobile,
+                            sh_acc.account_name as shipping_account_name, 
+                            sh_acc.account_mobile as shipping_account_mobile,
+                            UPPER(transport.transport_name) as transport_name,
+                            user.user_fullname
                             FROM sales_master sm
                             LEFT JOIN account_master acc ON(acc.account_id = sm.sm_acc_id)
+                            LEFT JOIN account_master sh_acc ON(sh_acc.account_id = sm.sm_shipping_acc_id)
+                            LEFT JOIN transport_master transport ON(transport.transport_id = sm.sm_transport_id)
                             LEFT JOIN user_master user ON(user.user_id = sm.sm_user_id)
                             WHERE sm.sm_id = $sm_id
                          ";
@@ -206,33 +227,45 @@
 
             return $record;   
 		}
-		public function get_data_for_print($sm_id){
+		public function get_data_for_print($sm_id){   
 			$sales_query ="
                             SELECT sm.*,
                             UPPER(acc.account_name) as account_name, 
-                            acc.account_mobile, 
+                            acc.account_mobile,
+                            acc.account_address,
+                            acc.account_gst_no, 
+                            UPPER(sh_acc.account_name) as shipping_account_name, 
+                            sh_acc.account_mobile as shipping_account_mobile,
+                            sh_acc.account_address as shipping_account_address,
+                            sh_acc.account_gst_no as shipping_account_gst_no,
                             UPPER(user.user_fullname) as user_fullname,
-                            user.user_mobile as user_mobile
+                            user.user_mobile as user_mobile,
+                            UPPER(transport.transport_name) as transport_name,
+                            transport.transport_gst_no,
+                            transport.transport_address 
                             FROM sales_master sm
                             LEFT JOIN account_master acc ON(acc.account_id = sm.sm_acc_id)
+                            LEFT JOIN account_master sh_acc ON(sh_acc.account_id = sm.sm_shipping_acc_id)
+                            LEFT JOIN transport_master transport ON(transport.transport_id = sm.sm_transport_id)
                             LEFT JOIN user_master user ON(user.user_id = sm.sm_user_id)
                             WHERE sm.sm_id = $sm_id ";
             $record['sales_data'] = $this->db->query($sales_query)->result_array();
             $trans_query ="
                             SELECT 
+                            IF(st_dispatch_date !='',DATE_FORMAT(st.st_dispatch_date,'%d-%m-%Y'),'') as dispatch_date,
                             UPPER(style.style_name) as style_name,
                             UPPER(design.design_name) as design_name, 
+                            UPPER(hsn.hsn_name) as hsn_name, 
                             st.*
                             FROM sales_trans st
                             INNER JOIN barcode_master bm ON(bm.bm_id = st.st_bm_id)
                             LEFT JOIN design_master design ON(design.design_id = bm.bm_design_id)
+                            LEFT JOIN hsn_master hsn ON(hsn.hsn_id = bm.bm_hsn_id)
                             LEFT JOIN style_master style ON(style.style_id = st.st_style_id)
                             WHERE st.st_sm_id = $sm_id
                           ";
             $record['trans_data'] = $this->db->query($trans_query)->result_array();
-            // for ($i=0; $i <10 ; $i++) { 
-            //    $record['trans_data'][$i] = $record['trans_data'][0];
-            // }
+            
             // echo "<pre>"; print_r($record); exit();
 
             return $record;   
@@ -397,7 +430,7 @@
             return $data[0]['amt'];
         }
 
-         public function get_payment_mode_data($sm_id){  
+        public function get_payment_mode_data($sm_id){  
                 $query="SELECT spmt.spmt_id,
                         spmt.spmt_amt as spmt_amt,
                         spmt.spmt_payment_mode_id as spmt_payment_mode_id,
@@ -441,8 +474,17 @@
                 });
 
                 return $record;
-            }
-            
+        }
+        
+        public function get_approval_data($id){ 
+            $query="SELECT sm.*,
+                    UPPER(acc.account_name) as customer_name
+                    FROM sales_master sm
+                    INNER JOIN account_master acc ON(acc.account_id = sm.sm_acc_id)
+                    WHERE sm.sm_id = $id";
+            return $this->db->query($query)->result_array();
+        } 
+
         public function get_select2_bill_no(){
             $subsql = "";
 
@@ -451,7 +493,8 @@
                 $subsql .= " AND (sm.sm_bill_no LIKE '%".$name."%') ";
             }
             $query ="
-                        SELECT sm_id as id, sm_bill_no as name
+                        SELECT sm_id as id, 
+                        CONCAT(IF(sm.sm_with_gst=1,'INV','EST'),'-',sm.sm_bill_no) as name
                         FROM ".$this->master." sm
                         WHERE sm.sm_branch_id = ".$_SESSION['user_branch_id']."
                         $subsql

@@ -94,6 +94,51 @@
 		}
 	}
 
+
+	if (!function_exists('send_whatsapp')){   
+		function send_whatsapp($mob, $msg,$link='',$api_type=''){  
+			$instanceid = "cmfzhxnjr5pcd12mhtfxtavh2"; 
+			$msg = urlencode($msg);
+        	if(strlen(trim($mob))==10){
+				$mob = "91".$mob;
+			}else if(strpos(trim($mob),"+91")==false){
+				$mob = str_replace('+91','91',$mob);
+			}else if(strpos(trim($mob),"+")==false){
+				$mob = str_replace('+','',$mob);
+			}
+			$api_type = (isset($api_type) && !empty($api_type))? $api_type: 'sendText';
+			
+			$url = 'https://enotify.app/api/';
+			$url .= $api_type;
+			$url.= '?token='.$instanceid;
+			$url.= '&phone='.$mob;
+			$url.= '&message='.$msg;
+			if(isset($link) && !empty($link)) $url .= '&link='.$link;
+			$output = json_decode(@file_get_contents($url), true);
+
+			$msg = 'Bad request'; 
+			$status = FALSE;
+			// Check if response is valid and successful
+			if (isset($output['status']) && $output['status'] === 'success') {
+			    if ($output['message'] === 'Insufficient credit') {
+			        $msg = 'Insufficient credit';
+			    } else {
+			        $msg = 'Whatsapp msg sent successfully.';
+			        $status = TRUE;
+			    }
+			} elseif (isset($output['message'])) {
+			    $msg = $output['message'];
+			}
+
+			return [
+			    'status' => $status,
+			    'data' => $status,
+			    'msg'   => $msg
+			];
+			
+		}
+	} 
+
 		
 
 ?>

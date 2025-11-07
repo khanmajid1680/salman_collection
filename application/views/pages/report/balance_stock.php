@@ -14,7 +14,7 @@
 	$bal_amt_to 		= (isset($_GET['bal_amt_to'])) ? $_GET['bal_amt_to'] : "";
 	$url 				= $_SERVER['QUERY_STRING'];
 ?>
-<script>
+<script> 
     let link 	= "report";
     let sub_link= "balance_stock";
 </script>

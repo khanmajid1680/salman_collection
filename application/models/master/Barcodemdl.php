@@ -18,12 +18,24 @@
             return $data[0]['cnt'];
         }
         public function get_search($condition){
-            $data   = $this->db->get_where($this->table,$condition)->result_array();
-            if(empty($data)) return ['value' => '', 'text' => ''];
-            $value  = $data[0]['bm_id'];
-            $text   = $data[0]['bm_item_code'];
-            return ['value' => $value, 'text' => $text];
-        }
+		    if (isset($condition['bm_id']) && is_array($condition['bm_id'])) {
+		        $this->db->where_in('bm_id', $condition['bm_id']);
+		        $query = $this->db->get($this->table);
+		    } else {
+		        $query = $this->db->get_where($this->table, $condition);
+		    }
+
+		    $data = $query->result_array();
+		    if (empty($data)) return ['value' => '', 'text' => ''];
+
+		    $values = array_column($data, 'bm_id');
+		    $texts  = array_column($data, 'bm_item_code');
+
+		    return [
+		        'value' => implode(',', $values),
+		        'text'  => implode(',', $texts)
+		    ];
+		}
 		public function get_record($condition, $wantDropDown = false){
 			$record = [];
 			$data 	= $this->db->get_where($this->table,$condition)->result_array();
@@ -271,7 +283,7 @@
 	                    0 as prt_igst_amt,
 	                	IF(design.design_sgst_per > 0, design.design_sgst_per, 2.5) AS design_sgst_per,
 	                	IF(design.design_cgst_per > 0, design.design_cgst_per, 2.5) AS design_cgst_per,
-	                	IF(design.design_igst_per > 0, design.design_igst_per, 2.5) AS design_igst_per,
+	                	IF(design.design_igst_per > 0, design.design_igst_per, 5) AS design_igst_per,
 	                    bm.bm_item_code, bm.bm_sp_amt,
 	                    design.design_id, UPPER(design.design_name) as design_name,
 	                    style.style_id, UPPER(style.style_name) as style_name,

@@ -12,7 +12,7 @@ $path           = isset($master_pdf[0]['file']) ? $master_pdf[0]['file'] : '';
 class MYPDF extends TCPDF 
 {
     //Page header
-    public function Header()     
+    public function Header()      
     { 
         global $master_pdf ; 
 
@@ -27,7 +27,7 @@ class MYPDF extends TCPDF
             <table cellpadding="0" style="border-top-color:#000;border-left-color:#000;border-right-color:#000;"> 
                         <br/><br/>
                         <tr>
-                            <td width="100%"style="text-align:center;font-size:16px"><h2>SALMAN<br/> <span style="font-size:16px">COLLLECTION</span></h2></td>
+                            <td width="100%"style="text-align:center;font-size:16px"><h2>SALMAN<br/> <span style="font-size:16px">COLLECTION</span></h2></td>
                         </tr>
                         <tr>
                             <td width="100%"style="text-align:center;font-size:9px">48-D, Nakhuda Street, Shop No. 2,<br/>Below Beg Mohd. Baug, Mohd Ali. Road,<br/> Mumbai - 400 003, INDIA<br/>Tel (T): 022 2342 1587 / 2342 1588<br/>Mob (M): 8591691428 /9167446593 /9323988060<br/>02223421587 /02223421588<br/>FOLLOW US ON: Insta: @_.salmancollection._ <br/><b>Web</b>: www.salmancollection.in'.$GSTIN.'</td>
@@ -79,7 +79,7 @@ class MYPDF extends TCPDF
         global $master_pdf;
         global $trans_pdf ;
         $trans_cnt      = count($trans_pdf);
-        $footer_h       =($trans_cnt*6)+ 89; 
+        $footer_h       =($trans_cnt*10.2)+ 89; 
        
         $tbl_footer ='';
         $tbl_footer .='<table width="100%"  border="1" cellpadding="4" >
@@ -126,9 +126,22 @@ class MYPDF extends TCPDF
         $tbl_footer .='<tr style="font-size:15px;font-weight:bold;">
                 <th style="width:50%;text-align:left;">TOTAL :</th>
                 <th style="width:50%;text-align:right;">'.round($master_pdf[0]['sm_final_amt']).'</th>
-            </tr>
+            </tr>';
 
-            <tr style="font-size:8px;">
+        if($master_pdf[0]['sm_collected_amt']>0):     
+            $tbl_footer .='<tr style="font-size:13px;">
+                    <th style="width:50%;text-align:left;">ADVANCE :</th>
+                    <th style="width:50%;text-align:right;">'.$master_pdf[0]['sm_collected_amt'].'</th>
+                </tr>';
+
+            $tbl_footer .='<tr style="font-size:13px;">
+                    <th style="width:50%;text-align:left;">BALANCE :</th>
+                    <th style="width:50%;text-align:right;">'.$master_pdf[0]['sm_balance_amt'].'</th>
+                </tr>';
+                    
+        endif;     
+
+        $tbl_footer .='<tr style="font-size:8px;">
                 <th style="width:100%;">1. DRY CLEAN COMPULSORY.<br/>
                     2. Bill and Tag compulsory at the time of exchange<br/>
                     3. Exchange within 3 days of purchase only (dress materials only)<br/>
@@ -147,7 +160,7 @@ class MYPDF extends TCPDF
 
 }
 
-$page_size = array('85',($trans_cnt*6)+158);
+$page_size = array('85',($trans_cnt*10.2)+170);
 $pdf = new MYPDF('P', PDF_UNIT,$page_size, true, 'UTF-8', false);
 $file_name = 'Order.pdf';
 
@@ -194,8 +207,10 @@ $pdf->AddPage();
 $body .= '<table cellpadding="3" >'; 
             foreach($trans_data as $key => $value) : 
                     $cnt = $key+1;
+                $dispatch_dt = (empty($value['dispatch_date']))? '<span><br/></span>': '<span style="font-size:10px"><br/>Del-Dt :'.$value['dispatch_date'].'</span>';
+                    
                 $body .= '<tr style="font-size:12px;">
-                            <td style="width:40%;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['design_name'].'</td>
+                            <td style="width:40%;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['design_name'].$dispatch_dt.'</td>
                             <td style="width:15%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['st_qty'].'</td>
                             <td style="width:20%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['st_rate'].'</td>
                             <td style="width:25%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;border-right-color:#ccc;">'.$value['st_sub_total_amt'].'</td>
@@ -206,7 +221,6 @@ $body .= '</table>';
 
 $pdf->writeHTML($body, true, false, false, false, '');
 
-//Close and output PDF document
 if(empty($path)){ 
     $pdf->Output('ORDER-BILL.pdf', 'I');
 }else{

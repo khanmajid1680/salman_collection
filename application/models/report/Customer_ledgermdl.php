@@ -76,6 +76,7 @@
 						INNER JOIN account_master acc ON(acc.account_id = sm.sm_acc_id)
 						WHERE sm.sm_branch_id = ".$_SESSION['user_branch_id']."
 						AND sm.sm_created_at <= '".$this->end_date."'
+						AND sm.sm_sales_type=0
 						$subsql1
 						ORDER BY sm.sm_created_at ASC
 					";

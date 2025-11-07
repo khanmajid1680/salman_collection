@@ -4,12 +4,15 @@
 	$search_status 	= !isset($_GET['search_status']);
 	$from_bill_date = (isset($_GET['from_bill_date'])) ? $_GET['from_bill_date'] : "";
 	$to_bill_date 	= (isset($_GET['to_bill_date'])) ? $_GET['to_bill_date'] : "";
-	
 	$url 			= $_SERVER['QUERY_STRING'];
+
+	$_sort_by 	= (isset($_GET['_sort_by'])) ? $_GET['_sort_by'] : "";
+	$_order_by 	= (isset($_GET['_order_by'])) ? $_GET['_order_by'] : "DESC";
+
 ?>
 <script>
     let link 	= "report";
-    let sub_link= "ca_report";
+    let sub_link= "ca_report"; 
 </script>
 <section class="container-fluid sticky_top">
 	<form class="form-horizontal" id="search_form" action="<?php echo base_url('report/ca_report?action=view')?>" method="get">
@@ -70,6 +73,37 @@
 	                    <label for="inputEmail3">TO BILL DATE</label>
 					</div>
 				</div>
+				<div class="d-flex col-6 col-sm-4 col-md-4 col-lg-3">
+					<div class="floating-label">
+						<p for="inputEmail3">SORT BY</p>
+						<select name="_sort_by" class="form-control floating-select" onchange="trigger_search()">
+							<option value="">SELECT</option>
+							<option value="bill_no" <?php echo ($_sort_by=='bill_no')?'selected':''?>>Bill NO</option>
+							<option value="entry_date" <?php echo ($_sort_by=='entry_date')?'selected':''?>>Bill Date</option>
+							<option value="ms_net_5" <?php echo ($_sort_by=='ms_net_5')?'selected':''?>>M/S NET 5%</option>
+							<option value="cgst_25" <?php echo ($_sort_by=='cgst_25')?'selected':''?>>cgst 2.5</option>
+							<option value="sgst_25" <?php echo ($_sort_by=='sgst_25')?'selected':''?>>sgst 2.5</option>
+							<option value="cash_amt" <?php echo ($_sort_by=='cash_amt')?'selected':''?>>CASH</option>
+							<option value="ms_net_18" <?php echo ($_sort_by=='ms_net_18')?'selected':''?>>ms/net 8%</option>
+							<option value="cgst_9" <?php echo ($_sort_by=='cgst_9')?'selected':''?>>cgst 9%</option>
+							<option value="sgst_9" <?php echo ($_sort_by=='sgst_9')?'selected':''?>>sgst 9%</option>
+							<option value="oms_net_5" <?php echo ($_sort_by=='oms_net_5')?'selected':''?>>oms net 5%</option>
+							<option value="igst_5" <?php echo ($_sort_by=='igst_5')?'selected':''?>>igst 5%</option>
+							<option value="oms_net_18" <?php echo ($_sort_by=='oms_net_18')?'selected':''?>>oms net 18%</option>
+							<option value="total_amt" <?php echo ($_sort_by=='total_amt')?'selected':''?>>Total</option>
+
+						</select>
+					</div>
+					<div class="floating-label">
+						<p>ORDER&nbsp;BY</p>
+						<select name="_order_by" onchange="trigger_search()" class="form-control floating-select">
+							<option value="DESC">&nbsp;&nbsp;&nbsp;DESC</option>
+							<option value="ASC">&nbsp;&nbsp;&nbsp;&nbsp;ASC</option>
+						</select>    
+					</div> 
+
+				</div>
+
 				<div style="font-family: Arial, sans-serif; line-height: 1.5;">
 				    <strong>M/S</strong>: Local sales (within the same state) &nbsp;|&nbsp; 
 				    <strong>OMS</strong>: Out-of-state sales (interstate)

@@ -15,7 +15,7 @@
             <a type="button" class="btn btn-sm btn-primary" onclick="redirectPage('purchase?action=view')" data-toggle="tooltip" data-placement="bottom" title="CANCEL" tabindex="21"><i class="text-danger fa fa-close"></i></a>
         </li>
       </ol>
-    </nav>
+    </nav> 
 </section>
 <section class="container-fluid my-3">
 	<form class="form-horizontal" id="purchase_form">
@@ -230,7 +230,7 @@
                                     </p>                                                
                                     <select class="form-control floating-select" id="brand_id" name="brand_id" placeholder=" " tabindex="13" onchange="validate_dropdown(this, false)"></select>
                                     <small class="form-text text-muted helper-text" id="brand_id_msg"></small>
-                                </td>
+                                </td> 
                                 <td class="floating-label" width="6%">
                                     <input type="number" class="form-control floating-input mb-2" id="sgst_per" value="0" placeholder="" autocomplete="off" min="0" readonly="" />
                                     <input type="number" class="form-control floating-input mb-2" id="cgst_per" value="0" placeholder="" autocomplete="off" min="0" readonly="" />
@@ -248,9 +248,13 @@
                                     <label for="inputEmail3">TOTAL</label>       
                                 </td>                              
                                 <td class="floating-label" width="5%">
-                                    <input type="number" class="form-control floating-input" id="mrp" value="0" placeholder="" autocomplete="off" tabindex="16" />
+                                    <input type="number" class="form-control floating-input" id="mrp" value="" placeholder="" autocomplete="off" tabindex="16" />
                                     <label for="inputEmail3">MRP</label>       
                                 </td>
+                              <!--   <td class="floating-label" width="5%">
+                                    <input type="number" class="form-control floating-input" id="token_amt" value="" placeholder="" autocomplete="off"tabindex="16" />
+                                    <label for="inputEmail3">TOKEN AMT</label>       
+                                </td> -->
                                 <td class="floating-label" width="6%">
                                     <textarea class="form-control floating-input" id="desc" placeholder="" autocomplete="off" ></textarea>
                                     <label for="inputEmail3">DESCRIPTION</label> 
@@ -261,7 +265,7 @@
                                                
                             </tr>
 						</table> 
-						<div class="card-body p-0" style="max-width:100vw; max-height:50vh; overflow:auto;" id="div_wrapper">
+						<div class="card-body p-0 table table-responsive" style="max-width:100vw; max-height:50vh; overflow:auto;">
                             <table class="table table-sm text-uppercase">
                                 <thead>
         							<tr style="font-size: 12px;">
@@ -286,6 +290,7 @@
                                         <th >TOTAL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
                                         <th >CP&nbsp;CODE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
                                         <th >MRP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                      <!--   <th >TOKEN&nbsp;AMT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th> -->
                                         <th >Action&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
         	                        </tr>
                                 </thead>
@@ -319,9 +324,21 @@
                                                     <!-- design -->
 
                                                     <!-- Style -->
-                                                    <td class="floating-label">
-                                                        <input type="text" class="form-control floating-input" id="style_name_<?php echo $purchase_cnt ?>" value="<?php echo strtoupper($value['style_name']); ?>" title="<?php echo strtoupper($value['style_name']); ?>" readonly="">
-                                                        <input type="hidden" name="pt_style_id[]" id="pt_style_id_<?php echo $purchase_cnt ?>" value="<?php echo $value['pt_style_id']; ?>">
+                                                    <td class="floating-label"> 
+                                                        <?php if($value['isExist']): ?>
+                                                            <input type="text" class="form-control floating-input" id="style_name_<?php echo $purchase_cnt ?>" value="<?php echo strtoupper($value['style_name']); ?>" title="<?php echo strtoupper($value['style_name']); ?>" readonly="">
+                                                            <input type="hidden" name="pt_style_id[]" id="pt_style_id_<?php echo $purchase_cnt ?>" value="<?php echo $value['pt_style_id']; ?>">
+
+                                                        <?php else: ?>
+                                                            <select class="form-control floating-select style_selec2" name="pt_style_id[]" id="pt_style_id_<?php echo $purchase_cnt ?>" >
+                                                                   <?php if(!empty($value['pt_style_id'])): ?>
+                                                                        <option value="<?php echo $value['pt_style_id'] ?>" selected>
+                                                                            <?php echo $value['style_name']; ?> 
+                                                                        </option>
+                                                                        
+                                                                    <?php endif; ?>
+                                                            </select>
+                                                        <?php endif; ?>
                                                     </td>
                                                     <!-- Style -->
 
@@ -352,13 +369,13 @@
 
                                                     <!-- Rate -->
                                                     <td class="floating-label">
-                                                        <input type="number" class="form-control floating-input" name="pt_rate[]" id="pt_rate_<?php echo $purchase_cnt ?>" value="<?php echo round($value['pt_rate'], 2); ?>" title="<?php echo $value['pt_rate']; ?>" <?php echo $editable ? "onkeyup='calculate_master_total()'" : "readonly" ?> <?php echo $editable ? "onfocusout='set_cp_code($purchase_cnt)'" : "readonly" ?>>
+                                                        <input type="number" class="form-control floating-input" name="pt_rate[]" id="pt_rate_<?php echo $purchase_cnt ?>" value="<?php echo round($value['pt_rate'], 2); ?>" title="<?php echo $value['pt_rate']; ?>" <?php echo $editable ? "" : "readonly" ?> <?php echo $editable ? "onfocusout='set_cp_code($purchase_cnt)'" : "readonly" ?>  onkeyup="calculate_master_total()">
                                                     </td>
                                                     <!-- Rate -->
 
         	                                        <!-- SP -->
         	                                        <td class="floating-label">
-        	                                            <input type="number" class="form-control floating-input mb-2" name="pt_sp_amt[]" id="pt_sp_amt_<?php echo $purchase_cnt ?>" value="<?php echo $value['pt_sp_amt']; ?>" title="<?php echo $value['pt_sp_amt']; ?>" <?php echo $editable ? "onkeyup='calculate_master_total1()'" : "readonly" ?>>
+        	                                            <input type="number" class="form-control floating-input mb-2" name="pt_sp_amt[]" id="pt_sp_amt_<?php echo $purchase_cnt ?>" value="<?php echo $value['pt_sp_amt']; ?>" title="<?php echo $value['pt_sp_amt']; ?>" <?php echo $editable ? "" : "readonly" ?>  onkeyup="calculate_master_total1()">
         	                                            <input type="number" class="form-control floating-input" name="pt_sp_per[]" id="pt_sp_per_<?php echo $purchase_cnt ?>" value="<?php echo $value['pt_sp_per']; ?>" title="<?php echo $value['pt_sp_per']; ?>"  <?php echo $editable ? "onkeyup='calculate_master_total()'" : "readonly" ?>>
         	                                        </td>
         	                                        <!-- SP -->
@@ -401,7 +418,8 @@
 
                                                     <!-- IGST -->
                                                     <td class="floating-label">
-                                                        <input type="number" class="form-control floating-input" name="pt_igst_per[]" id="pt_igst_per_<?php echo $purchase_cnt ?>" value="<?php echo $value['pt_igst_per']; ?>" title="<?php echo $value['pt_igst_per']; ?>" readonly>
+                                                        <input type="number" class="form-control floating-input" name="pt_igst_per[]" id="pt_igst_per_<?php echo $purchase_cnt ?>" value="<?php echo $value['pt_igst_per']; ?>" title="<?php echo $value['pt_igst_per']; ?>" 
+                                                        <?php echo $editable ? "onkeyup='change_gst_per($purchase_cnt)'" : "readonly" ?>>
                                                     </td>
                                                     <td class="floating-label">
                                                         <input type="number" class="form-control floating-input" name="pt_igst_amt[]" id="pt_igst_amt_<?php echo $purchase_cnt ?>" value="<?php echo $value['pt_igst_amt']; ?>" title="<?php echo $value['pt_igst_amt']; ?>" readonly>
@@ -423,8 +441,8 @@
                                                     <td class="floating-label">
                                                         <input type="number" class="form-control floating-input" name="pt_mrp[]" id="pt_mrp_<?php echo $purchase_cnt ?>" value="<?php echo $value['pt_mrp']; ?>" title="<?php echo $value['pt_mrp']; ?>">
                                                     </td>
-                                                    <!-- MRP -->
-                                                                
+                                                    <!-- MRP --> 
+                                                  
                                                     <!-- Remove -->
                                                     <td class="text-center floating-label">
                                                         <?php if($value['isExist']): ?>
@@ -450,7 +468,7 @@
 	</form>
 </section>
 <?php $this->load->view('templates/footer'); ?>
-<script src="<?php echo assets('dist/js/purchase/purchase.js?v=1')?>"></script>
+<script src="<?php echo assets('dist/js/purchase/purchase.js?v=6')?>"></script>
 <script src="<?php echo assets('dist/js/master/account.js?v=1')?>"></script>
 <script src="<?php echo assets('dist/js/master/design.js')?>"></script> 
 <script src="<?php echo assets('dist/js/master/style.js')?>"></script>

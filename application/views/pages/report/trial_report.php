@@ -10,7 +10,7 @@
 	$to_bill_amt 	= (isset($_GET['to_bill_amt'])) ? $_GET['to_bill_amt'] : "";
 	$url 			= $_SERVER['QUERY_STRING'];
 ?>
-<script>
+<script> 
     let link 	= "report";
     let sub_link= "trial_report";
 </script>
@@ -30,6 +30,28 @@
 			    </li>
 			    <li class="breadcrumb-item" aria-current="reload-page">
 			    	<a type="button" class="btn btn-sm btn-primary" onclick="redirectPage('report/trial_report?action=view')" data-toggle="tooltip" data-placement="bottom" title="REFRESH"><i class="text-info fa fa-undo"></i></a>
+			    </li> 
+			    <li class="breadcrumb-item" aria-current="print-page">
+			    	<?php if(!empty($data['data'])): ?>
+			    		<a target="_blank" type="button" class="btn btn-sm btn-primary mr-2" data-toggle="tooltip" data-placement="bottom" title="EXCEL" href="<?php echo base_url("report/trial_report/excel?$url"); ?>">
+			    			<i class="text-success fa fa-file-excel-o"></i>
+			    		</a>
+			    	<?php else: ?>
+			    		<button type="button" class="btn btn-sm btn-primary mr-2" data-toggle="tooltip" data-placement="bottom" title="PDF" disabled="disabled">
+			    			<i class="text-success fa fa-file-excel-o"></i>
+			    		</button>
+			    	<?php endif; ?>
+			    </li>
+			     <li class="breadcrumb-item" aria-current="print-page">
+			    	<?php if(!empty($data['data'])): ?>
+			    		<a target="_blank" type="button" class="btn btn-sm btn-primary mr-2" data-toggle="tooltip" data-placement="bottom" title="PDF" href="<?php echo base_url("report/trial_report?submit=PDF&$url"); ?>">
+			    			<i class="text-success fa fa-print"></i>
+			    		</a>
+			    	<?php else: ?>
+			    		<button type="button" class="btn btn-sm btn-primary mr-2" data-toggle="tooltip" data-placement="bottom" title="PDF" disabled="disabled">
+			    			<i class="text-success fa fa-print"></i>
+			    		</button>
+			    	<?php endif; ?>
 			    </li>
 			    <li class="breadcrumb-item" aria-current="search-box">
 			    	<input type="checkbox" id="search_status" name="search_status" data-toggle="toggle" data-on="FILTER <i class='fa fa-eye'></i>" data-off="FILTER <i class='fa fa-eye-slash'></i>" data-onstyle="primary" data-offstyle="primary" data-width="100" data-size="mini" data-style="show-hide" onchange="set_search_box()" <?php echo empty($search_status) ? 'checked' : ''; ?>>
@@ -82,7 +104,6 @@
                     	<?php endif; ?>
                 	</select>
 				</div>
-				
 			</div>
 		</div>
 		<div class="row">

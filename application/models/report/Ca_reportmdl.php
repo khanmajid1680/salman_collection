@@ -21,6 +21,16 @@
 				$to_date = date('Y-m-d', strtotime($_GET['to_bill_date']));
 				$subsql .= " AND sm.sm_bill_date <= '".$to_date."'";
 			}
+
+			$sort = " ORDER BY sm.sm_bill_no"; 
+			if(isset($_GET['_sort_by']) && !empty($_GET['_sort_by'])){
+				$sort = " ORDER BY ".$_GET['_sort_by'].""; 
+			}
+
+			$order_by ='DESC';
+			if(isset($_GET['_order_by']) && !empty($_GET['_order_by'])){
+				$order_by = $_GET['_order_by'];
+			}
            
             
 			$query = "
@@ -29,85 +39,85 @@
 			        sm.sm_bill_no as bill_no,
 
 			       -- Local Sales 5%
-				        SUM(
+				        ROUND(SUM(
 				            CASE 
 				                WHEN sm.sm_gst_type = 0 AND st.st_cgst_per = 2.5 AND st.st_sgst_per = 2.5 
 				                THEN st.st_taxable_amt 
 				                ELSE 0 
 				            END
-				        ) AS ms_net_5,
-				        SUM(
+				        ), 2) AS ms_net_5,
+				        ROUND(SUM(
 				            CASE 
 				                WHEN sm.sm_gst_type = 0 AND st.st_cgst_per = 2.5 
 				                THEN ROUND(st.st_taxable_amt * st.st_cgst_per / 100, 2)
 				                ELSE 0 
 				            END
-				        ) AS cgst_25,
-				        SUM(
+				        ),2) AS cgst_25,
+				        ROUND(SUM(
 				            CASE 
 				                WHEN sm.sm_gst_type = 0 AND st.st_sgst_per = 2.5 
 				                THEN ROUND(st.st_taxable_amt * st.st_sgst_per / 100, 2)
 				                ELSE 0 
 				            END
-				        ) AS sgst_25,
+				        ),2) AS sgst_25,
 
 				        sm.sm_bill_no,
 				        0 AS cash_amt,
 
 				        -- Local Sales 18%
-				        SUM(
+				       ROUND(SUM(
 				            CASE 
 				                WHEN sm.sm_gst_type = 0 AND st.st_cgst_per = 9 AND st.st_sgst_per = 9 
 				                THEN st.st_taxable_amt 
 				                ELSE 0 
 				            END
-				        ) AS ms_net_18,
-				        SUM(
+				        ),2) AS ms_net_18,
+				        ROUND(SUM(
 				            CASE 
 				                WHEN sm.sm_gst_type = 0 AND st.st_cgst_per = 9 
 				                THEN ROUND(st.st_taxable_amt * st.st_cgst_per / 100, 2)
 				                ELSE 0 
 				            END
-				        ) AS cgst_9,
-				        SUM(
+				        ),2) AS cgst_9,
+				        ROUND(SUM(
 				            CASE 
 				                WHEN sm.sm_gst_type = 0 AND st.st_sgst_per = 9 
 				                THEN ROUND(st.st_taxable_amt * st.st_sgst_per / 100, 2)
 				                ELSE 0 
 				            END
-				        ) AS sgst_9,
+				        ),2) AS sgst_9,
 
 				        -- OMS (Out of State) 5%
-				        SUM(
+				        ROUND(SUM(
 				            CASE 
 				                WHEN sm.sm_gst_type = 1 AND st.st_igst_per = 5 
 				                THEN st.st_taxable_amt 
 				                ELSE 0 
 				            END
-				        ) AS oms_net_5,
-				        SUM(
+				        ),2) AS oms_net_5,
+				        ROUND(SUM(
 				            CASE 
 				                WHEN sm.sm_gst_type = 1 AND st.st_igst_per = 5 
 				                THEN ROUND(st.st_taxable_amt * st.st_igst_per / 100, 2)
 				                ELSE 0 
 				            END
-				        ) AS igst_5,
+				        ),2) AS igst_5,
 
 				        -- OMS (Out of State) 18%
-				        SUM(
+				        ROUND(SUM(
 				            CASE 
 				                WHEN sm.sm_gst_type = 1 AND st.st_igst_per = 18 
 				                THEN st.st_taxable_amt 
 				                ELSE 0 
 				            END
-				        ) AS oms_net_18,
-				        SUM(
+				        ),2) AS oms_net_18,
+				       ROUND(SUM(
 				            CASE 
 				                WHEN sm.sm_gst_type = 1 AND st.st_igst_per = 18 
 				                THEN ROUND(st.st_taxable_amt * st.st_igst_per / 100, 2)
 				                ELSE 0 
 				            END
-				        ) AS igst_18,
+				        ),2) AS igst_18,
 
 			        -- Total
 			        SUM(st.st_sub_total_amt) AS total_amt
@@ -118,12 +128,15 @@
 			    WHERE sm.sm_branch_id = ".$_SESSION['user_branch_id']."
 			      AND sm.sm_fin_year = '".$_SESSION['fin_year']."'
 			      AND sm.sm_with_gst=1
+			      AND sm.sm_sales_type=0
 			      $subsql
 			    GROUP BY sm.sm_id
-			    ORDER BY sm.sm_id DESC
+			    $sort $order_by
 			";
 			// echo "<pre>"; print_r($query); exit;
 			$record['data'] = $this->db->query($query)->result_array();
+			// echo "<pre>"; print_r($record); exit;
+			
 			$ms_net_5 	= 0;
 			$cgst_25 	= 0;
 			$sgst_25 	= 0;

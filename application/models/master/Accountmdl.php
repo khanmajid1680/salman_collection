@@ -147,17 +147,6 @@
                             AND acc.account_status = 1";
             $record['acc_data'] = $this->db->query($acc_query)->result_array();
 
-            $loyalty_point_query ="
-                                    SELECT SUM(lpm.lpm_point - lpm.lpm_point_used) as lpm_point 
-                                    FROM loyalty_point_master lpm 
-                                    WHERE lpm.lpm_acc_id = $acc_id 
-                                    AND (lpm.lpm_point - lpm.lpm_point_used) > 0 
-                                    AND lpm.lpm_exp_date >= '".date('Y-m-d')."' 
-                                    GROUP BY lpm.lpm_acc_id 
-                                    HAVING lpm_point > 199
-                                ";
-            $record['loyalty_point_data'] = $this->db->query($loyalty_point_query)->result_array();
-
             $sales_query="
             				SELECT sm_bill_date
             				FROM sales_master
@@ -175,8 +164,7 @@
             				FROM sales_return_master
             				WHERE srm_acc_id = $acc_id
             				ORDER BY srm_entry_date DESC
-            				LIMIT 1
-            			 ";
+            				LIMIT 1";
             	$sales_ret_data = $this->db->query($sales_ret_query)->result_array();
             	if(!empty($sales_ret_data)){
             		$srm_entry_date = $sales_ret_data[0]['srm_entry_date'];

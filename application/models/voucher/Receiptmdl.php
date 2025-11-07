@@ -123,7 +123,7 @@
 			$trans_query ="
 							SELECT vt.*, sm.*
 							FROM voucher_trans vt
-							LEFT JOIN sales_master sm ON(sm.sm_id = vt.vt_sm_id)
+							LEFT JOIN sales_master sm ON(sm.sm_id = vt.vt_sm_id AND sm.sm_sales_type=0)
 							WHERE vt.vt_vm_id = $id
 						  ";
 			$record['master_data'] 	= $this->db->query($master_query)->result_array();

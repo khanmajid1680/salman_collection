@@ -311,6 +311,7 @@
 	                        FROM sales_master sm
 	                        WHERE sm.sm_branch_id = ".$_SESSION['user_branch_id']."
 	                        AND sm.sm_bill_date < '$date'
+	                        AND sm.sm_sales_type=0
 	                        $sales
 	                    ";
 	            // echo "<pre>"; print_r($query); exit;
@@ -342,6 +343,7 @@
                         SELECT IFNULL(SUM(sm.sm_collected_amt - sm.sm_to_pay), 0) as amt
                         FROM sales_master sm
                         WHERE sm.sm_branch_id = ".$_SESSION['user_branch_id']."
+                        AND sm.sm_sales_type=0
                         $subsql
                     ";
             // echo "<pre>"; print_r($query); exit;

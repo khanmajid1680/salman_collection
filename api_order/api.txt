@@ -1,0 +1,376 @@
+{  
+    "add_transaction" : { 
+        "om_customer_id":1100,
+        "apparel_id":45,
+        "call": 0
+    },
+    "add_edit_measurement_and_style" : {  as save_measurement()
+        "ot_id":11,
+        "ot_design_id":2031,
+        "ot_qty":1,
+        "ot_rate":3999,
+        "call": 0,
+       "item_data": [
+            {
+                "apparel_data": {
+                    "ot_id": "11",
+                    "apparel_id": "45",
+                    "apparel_name": "SHIRT",
+                    "cmt_remark": ""
+                },
+                "measurement_data": [
+                    {
+                        "cmt_id": "73",
+                        "cmt_measurement_name": "ARMS",
+                        "cmt_value1": "42",
+                        "cmt_remark": "",
+                        "cmt_ot_id": "11",
+                        "cmt_apparel_id": "45",
+                        "cmt_measurement_id": "24",
+                        "unique_id": "11_45_24"
+                    },
+                    {
+                        "cmt_id": "66",
+                        "cmt_measurement_name": "ARMS",
+                        "cmt_value1": "",
+                        "cmt_remark": "",
+                        "cmt_ot_id": "11",
+                        "cmt_apparel_id": "45",
+                        "cmt_measurement_id": "24",
+                        "unique_id": "11_45_24"
+                    },
+                    {
+                        "cmt_id": "68",
+                        "cmt_measurement_name": "BACK ×",
+                        "cmt_value1": "",
+                        "cmt_remark": "",
+                        "cmt_ot_id": "11",
+                        "cmt_apparel_id": "45",
+                        "cmt_measurement_id": "32",
+                        "unique_id": "11_45_32"
+                    },
+                    {
+                        "cmt_id": "75",
+                        "cmt_measurement_name": "BACK ×",
+                        "cmt_value1": "",
+                        "cmt_remark": "",
+                        "cmt_ot_id": "11",
+                        "cmt_apparel_id": "45",
+                        "cmt_measurement_id": "32",
+                        "unique_id": "11_45_32"
+                    },
+                    {
+                        "cmt_id": "74",
+                        "cmt_measurement_name": "ARMS LOSING",
+                        "cmt_value1": "",
+                        "cmt_remark": "",
+                        "cmt_ot_id": "11",
+                        "cmt_apparel_id": "45",
+                        "cmt_measurement_id": "33",
+                        "unique_id": "11_45_33"
+                    },
+                    {
+                        "cmt_id": "67",
+                        "cmt_measurement_name": "ARMS LOSING",
+                        "cmt_value1": "",
+                        "cmt_remark": "",
+                        "cmt_ot_id": "11",
+                        "cmt_apparel_id": "45",
+                        "cmt_measurement_id": "33",
+                        "unique_id": "11_45_33"
+                    },
+                    {
+                        "cmt_id": "76",
+                        "cmt_measurement_name": "BOTTOM",
+                        "cmt_value1": "",
+                        "cmt_remark": "",
+                        "cmt_ot_id": "11",
+                        "cmt_apparel_id": "45",
+                        "cmt_measurement_id": "11",
+                        "unique_id": "11_45_11"
+                    },
+                    {
+                        "cmt_id": "69",
+                        "cmt_measurement_name": "BOTTOM",
+                        "cmt_value1": "",
+                        "cmt_remark": "",
+                        "cmt_ot_id": "11",
+                        "cmt_apparel_id": "45",
+                        "cmt_measurement_id": "11",
+                        "unique_id": "11_45_11"
+                    },
+                    {
+                        "cmt_id": "71",
+                        "cmt_measurement_name": "CHEST",
+                        "cmt_value1": "42",
+                        "cmt_remark": "",
+                        "cmt_ot_id": "11",
+                        "cmt_apparel_id": "45",
+                        "cmt_measurement_id": "5",
+                        "unique_id": "11_45_5"
+                    },
+                    {
+                        "cmt_id": "77",
+                        "cmt_measurement_name": "LENGTH",
+                        "cmt_value1": "",
+                        "cmt_remark": "",
+                        "cmt_ot_id": "11",
+                        "cmt_apparel_id": "45",
+                        "cmt_measurement_id": "2",
+                        "unique_id": "11_45_2"
+                    },
+                    {
+                        "cmt_id": "78",
+                        "cmt_measurement_name": "CHEST",
+                        "cmt_value1": "42",
+                        "cmt_remark": "",
+                        "cmt_ot_id": "11",
+                        "cmt_apparel_id": "45",
+                        "cmt_measurement_id": "5",
+                        "unique_id": "11_45_5"
+                    },
+                    {
+                        "cmt_id": "72",
+                        "cmt_measurement_name": "WAIST",
+                        "cmt_value1": "",
+                        "cmt_remark": "",
+                        "cmt_ot_id": "11",
+                        "cmt_apparel_id": "45",
+                        "cmt_measurement_id": "10",
+                        "unique_id": "11_45_10"
+                    },
+                    {
+                        "cmt_id": "79",
+                        "cmt_measurement_name": "WAIST",
+                        "cmt_value1": "",
+                        "cmt_remark": "",
+                        "cmt_ot_id": "11",
+                        "cmt_apparel_id": "45",
+                        "cmt_measurement_id": "10",
+                        "unique_id": "11_45_10"
+                    },
+                    {
+                        "cmt_id": "70",
+                        "cmt_measurement_name": "LENGTH",
+                        "cmt_value1": "",
+                        "cmt_remark": "",
+                        "cmt_ot_id": "11",
+                        "cmt_apparel_id": "45",
+                        "cmt_measurement_id": "2",
+                        "unique_id": "11_45_2"
+                    }
+                ],
+                "style_data": [
+                    {
+                        "cst_id": "3",
+                        "style_id": "10",
+                        "cst_style_name": "APPLE CUT",
+                        "cst_value": "0",
+                        "cst_ot_id": "11",
+                        "cst_apparel_id": "45",
+                        "cst_style_id": "10",
+                        "unique_id": "11_45_10"
+                    },
+                    {
+                        "cst_id": "4",
+                        "style_id": "38",
+                        "cst_style_name": "BOX",
+                        "cst_value": "0",
+                        "cst_ot_id": "11",
+                        "cst_apparel_id": "45",
+                        "cst_style_id": "38",
+                        "unique_id": "11_45_38"
+                    }
+                ],
+                "style_priority_data": [
+                    {
+                        "spt_id": "79",
+                        "asm_id": "36",
+                        "asm_name": "COLLER",
+                        "apparel_id": "45",
+                        "apparel_style_data": [
+                            {
+                                "csit_id": "0",
+                                "ast_id": "134",
+                                "ast_name": "BUTTON DOWN COLLAR",
+                                "ast_image": "https://interlinkapp.in/the_tailor_lab/public/uploads/apparel_style/1733482707.jpg",
+                                "ast_default": "0",
+                                "csit_ot_id": "11",
+                                "csit_apparel_id": "45",
+                                "csit_ast_id": "134",
+                                "unique_id": "11_45_79_134"
+                            },
+                            {
+                                "csit_id": "0",
+                                "ast_id": "130",
+                                "ast_name": "CLASSIC",
+                                "ast_image": "https://interlinkapp.in/the_tailor_lab/public/uploads/apparel_style/1733482526.jpg",
+                                "ast_default": "0",
+                                "csit_ot_id": "11",
+                                "csit_apparel_id": "45",
+                                "csit_ast_id": "130",
+                                "unique_id": "11_45_79_130"
+                            },
+                            {
+                                "csit_id": "0",
+                                "ast_id": "136",
+                                "ast_name": "CUTWAY",
+                                "ast_image": "https://interlinkapp.in/the_tailor_lab/public/uploads/apparel_style/1733482816.jpg",
+                                "ast_default": "0",
+                                "csit_ot_id": "11",
+                                "csit_apparel_id": "45",
+                                "csit_ast_id": "136",
+                                "unique_id": "11_45_79_136"
+                            },
+                            {
+                                "csit_id": "0",
+                                "ast_id": "135",
+                                "ast_name": "LARGE SPREAD",
+                                "ast_image": "https://interlinkapp.in/the_tailor_lab/public/uploads/apparel_style/1733482799.jpg",
+                                "ast_default": "0",
+                                "csit_ot_id": "11",
+                                "csit_apparel_id": "45",
+                                "csit_ast_id": "135",
+                                "unique_id": "11_45_79_135"
+                            },
+                            {
+                                "csit_id": "0",
+                                "ast_id": "131",
+                                "ast_name": "NARROW",
+                                "ast_image": "https://interlinkapp.in/the_tailor_lab/public/uploads/apparel_style/1733482595.jpg",
+                                "ast_default": "0",
+                                "csit_ot_id": "11",
+                                "csit_apparel_id": "45",
+                                "csit_ast_id": "131",
+                                "unique_id": "11_45_79_131"
+                            },
+                            {
+                                "csit_id": "0",
+                                "ast_id": "133",
+                                "ast_name": "ROUNDED",
+                                "ast_image": "https://interlinkapp.in/the_tailor_lab/public/uploads/apparel_style/1733482675.jpg",
+                                "ast_default": "0",
+                                "csit_ot_id": "11",
+                                "csit_apparel_id": "45",
+                                "csit_ast_id": "133",
+                                "unique_id": "11_45_79_133"
+                            },
+                            {
+                                "csit_id": "0",
+                                "ast_id": "137",
+                                "ast_name": "SHALLOW",
+                                "ast_image": "https://interlinkapp.in/the_tailor_lab/public/uploads/apparel_style/1733482881.jpg",
+                                "ast_default": "0",
+                                "csit_ot_id": "11",
+                                "csit_apparel_id": "45",
+                                "csit_ast_id": "137",
+                                "unique_id": "11_45_79_137"
+                            },
+                            {
+                                "csit_id": "0",
+                                "ast_id": "132",
+                                "ast_name": "SPREAD COLLAR",
+                                "ast_image": "https://interlinkapp.in/the_tailor_lab/public/uploads/apparel_style/1733482643.jpg",
+                                "ast_default": "0",
+                                "csit_ot_id": "11",
+                                "csit_apparel_id": "45",
+                                "csit_ast_id": "132",
+                                "unique_id": "11_45_79_132"
+                            }
+                        ]
+                    },
+                    {
+                        "spt_id": "80",
+                        "asm_id": "54",
+                        "asm_name": "MODI JAKET TYPE",
+                        "apparel_id": "45",
+                        "apparel_style_data": [
+                            {
+                                "csit_id": "0",
+                                "ast_id": "123",
+                                "ast_name": "MODI JAKET REGULAR",
+                                "ast_image": "https://interlinkapp.in/the_tailor_lab/public/uploads/apparel_style/1728388531.jpeg",
+                                "ast_default": "0",
+                                "csit_ot_id": "11",
+                                "csit_apparel_id": "45",
+                                "csit_ast_id": "123",
+                                "unique_id": "11_45_80_123"
+                            },
+                            {
+                                "csit_id": "0",
+                                "ast_id": "124",
+                                "ast_name": "MODI JAKET WITH ROUND CUT",
+                                "ast_image": "https://interlinkapp.in/the_tailor_lab/public/uploads/apparel_style/1728388555.jpeg",
+                                "ast_default": "0",
+                                "csit_ot_id": "11",
+                                "csit_apparel_id": "45",
+                                "csit_ast_id": "124",
+                                "unique_id": "11_45_80_124"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    
+    "add_update" : {
+        "om_enquiry_id":0,
+        "om_id":0,
+        "om_memo_no": "102",
+        "om_uuid":" 15213",   // time().''.$user_id
+        "om_entry_date":"", // if om_id=0 insert current date
+        "om_trial_date":"",
+        "om_delivery_date":"",
+        "om_billing_id" : 1100,
+        "om_customer_id":1100,
+        "om_gst_type":0,
+        "om_stitching_qty":2,
+        "om_stitching_amt":0,
+        "om_stitching_taxable_amt":0,
+        "om_stitching_sgst_amt":0,
+        "om_stitching_cgst_amt":0,
+        "om_stitching_igst_amt":0,
+        "om_stitching_bill_disc_per":0,
+        "om_stitching_bill_disc_amt":0,
+        "om_stitching_total_amt":1000,
+        "om_payment_mode": "ONLINE",
+        "om_stitching_advance_amt": 600,
+        "om_adj_stitching_royalty_amt" :0,
+        "om_adj_stitching_referral_amt": 0, 
+        "om_stitching_balance_amt":0,
+        "call" : 0,
+        "trans_data":[
+            {
+            "ot_id": "11",
+            "ot_om_uuid": "17601671521",
+            "ot_design_id": "2031",
+            "ot_apparel_id": "45",
+            "ot_ot_id": "0",
+            "ot_qty": "1",
+            "ot_rate": "3999.00",
+            "ot_amt": "3999.00",
+            "ot_taxable_amt": "3808.57",
+            "ot_cgst_per": "2.50",
+            "ot_cgst_amt": "95.21",
+            "ot_sgst_per": "2.50",
+            "ot_sgst_amt": "95.21",
+            "ot_igst_per": "5.00",
+            "ot_igst_amt": "0.00",
+            "ot_total_amt": "3999.00",
+            "design_name": "",
+            "apparel_name": "SHIRT",
+            "apparel_data": []
+        }
+         
+        ]
+    },
+    "edit_measurement_data" : { as edit_measurement() 
+        "om_id":0,
+        "om_customer_id":1,
+        "ot_id": 11,
+        "call": 0
+    },
+    
+
+}

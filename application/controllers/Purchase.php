@@ -66,6 +66,19 @@ class Purchase extends CI_Controller{
 					}else{
 						$this->load->view('errors/error');
 					}
+				}else if($_GET['action'] == 'single_print'){ 
+					if(isset($_GET['id']) && !empty($_GET['id'])){
+						$clause = $_GET['clause'];
+	                    if(empty($clause)){
+	                        $this->load->view('errors/error');
+	                        return;	
+	                    }
+
+						$record = $this->model->get_single_data_for_print($clause,$_GET['id']);
+						$this->load->view('pdfs/barcode_pdf', $record);
+					}else{
+						$this->load->view('errors/error');
+					}
 				}else if($_GET['action'] == 'bill'){
 					if(isset($_GET['id']) && !empty($_GET['id'])){
 						$record = $this->model->get_data_for_bill_print($_GET['id']);
@@ -122,10 +135,7 @@ class Purchase extends CI_Controller{
 
 		$master_data['pm_final_amt']	= trim($post_data['pm_final_amt']);
 		$master_data['pm_updated_by'] 	= $_SESSION['user_id'];
-		$temp = $this->model->get_record(['pm_id !=' => $id,'pm_entry_no' => $master_data['pm_entry_no'],'pm_fin_year' => $_SESSION['fin_year'] ,'pm_branch_id' => $_SESSION['user_branch_id']], false);
-		if(!empty($temp)){
-			$master_data['pm_entry_no'] = $this->db_operations->get_fin_year_branch_max_id($this->master, 'pm_entry_no', 'pm_fin_year', $_SESSION['fin_year'], 'pm_branch_id', $_SESSION['user_branch_id']);
-		}
+		
 		
 		$temp1 = $this->model->get_record(['pm_id !=' => $id,'pm_bill_no' => $master_data['pm_bill_no'],'pm_acc_id' => $master_data['pm_acc_id'],'pm_fin_year' => $_SESSION['fin_year']], false);
 		if(!empty($temp1)){
@@ -134,6 +144,9 @@ class Purchase extends CI_Controller{
 		}
 
 		if($id == 0){
+
+			$master_data['pm_entry_no'] = $this->db_operations->get_fin_year_branch_max_id($this->master, 'pm_entry_no', 'pm_fin_year', $_SESSION['fin_year'], 'pm_branch_id', $_SESSION['user_branch_id']);
+
 			$this->db->trans_begin();
 			$master_data['pm_created_by'] 	= $_SESSION['user_id'];
 			$master_data['pm_created_at'] 	= date('Y-m-d H:i:s');
@@ -225,10 +238,12 @@ class Purchase extends CI_Controller{
 			$trans_data['pt_igst_amt'] 	= $post_data['pt_igst_amt'][$key];
 
 			$trans_data['pt_sub_total_amt']	= $post_data['pt_sub_total_amt'][$key];
-			$trans_data['pt_cp_code'] 	= $post_data['pt_cp_code'][$key];
-			$trans_data['pt_mrp'] 		= $post_data['pt_mrp'][$key];
+			$trans_data['pt_cp_code'] 		= $post_data['pt_cp_code'][$key];
+			$trans_data['pt_mrp'] 			= $post_data['pt_mrp'][$key];
+			// $trans_data['pt_token_amt'] 	= $post_data['pt_token_amt'][$key];
+			// $trans_data['pt_token_check'] 	= isset($post_data['pt_token_check'][$key])? 1 : 0;
 
-			if($value == 0){
+			if($value == 0){ 
 				$pt_id = $this->db_operations->data_insert($this->trans, $trans_data);
 				if($pt_id < 1){
 					return 0;
@@ -265,6 +280,10 @@ class Purchase extends CI_Controller{
 					$barcode_array['bm_mrp']				= $trans_data['pt_mrp'];
 					$barcode_array['bm_branch_id']			= $_SESSION['user_branch_id'];
 					$barcode_array['bm_fin_year']			= $_SESSION['fin_year'];
+
+					// $barcode_array['bm_token_amt']			= $trans_data['pt_token_amt'];
+					// $barcode_array['bm_token_check']			= $trans_data['pt_token_check'];
+
 					if($this->db_operations->data_insert('barcode_master',$barcode_array) < 1){
 						return 0;
 					}
@@ -277,8 +296,9 @@ class Purchase extends CI_Controller{
 				if(empty($barcode_data)){
 					return 0;
 				}
-				$temp['bm_serial_no'] 	= $trans_data['pt_serial_no'];
-				$temp['bm_pt_rate']		= $trans_data['pt_rate'];
+				$temp['bm_serial_no'] 			= $trans_data['pt_serial_no'];
+				$temp['bm_pt_rate']				= $trans_data['pt_rate'];
+				$temp['bm_style_id']	= $trans_data['pt_style_id'];
 				$temp['bm_pt_disc']		= $trans_data['pt_disc_amt'] / $trans_data['pt_qty'];
 				$temp['bm_taxable_amt']	= $trans_data['pt_taxable_amt'] / $trans_data['pt_qty'];
 				$temp['bm_sgst_amt']	= $trans_data['pt_sgst_amt'] / $trans_data['pt_qty'];
@@ -289,6 +309,10 @@ class Purchase extends CI_Controller{
 				$temp['bm_sp_amt']		= $trans_data['pt_sp_amt'];
 				$temp['bm_cp_code']		= $trans_data['pt_cp_code'];
 				$temp['bm_mrp']			= $trans_data['pt_mrp'];
+
+				// $barcode_array['bm_token_amt']		= $trans_data['pt_token_amt'];
+				// $barcode_array['bm_token_check']	= $trans_data['pt_token_check'];
+
 				if($this->db_operations->data_update('barcode_master', $temp, 'bm_pt_id', $value) < 1){
 					return 0;
 				}

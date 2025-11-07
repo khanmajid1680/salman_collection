@@ -91,6 +91,27 @@ defined('PAYMENT')              OR define('PAYMENT', 'PAYMENT');
 defined('RECEIPT')              OR define('RECEIPT', 'RECEIPT');
 defined('TO_PAY')              	OR define('TO_PAY', 'TO PAY');
 defined('TO_RECEIVE')          	OR define('TO_RECEIVE', 'TO RECEIVE');
+defined('ADMIN')         	   	OR define('ADMIN', 'ADMIN');
+defined('PURCHASE')            	OR define('PURCHASE', 'PURCHASE');
+defined('SALES')           	 	OR define('SALES', 'SALES');
+defined('DISPATCH')        	 	OR define('DISPATCH', 'DISPATCH');
+defined('SOURCING')        	 	OR define('SOURCING', 'SOURCING');
+defined('SUPER_ADMIN')          OR define('SUPER_ADMIN', 'SUPER ADMIN');
+defined('CUSTOMER')          	OR define('CUSTOMER', 'CUSTOMER');
+defined('SUPPLIER')          	OR define('SUPPLIER', 'SUPPLIER');
+defined('GENERAL')          	OR define('GENERAL', 'GENERAL');
+defined('WITHIN')          		OR define('WITHIN', 'WITHIN');
+defined('OUTSIDE')          	OR define('OUTSIDE', 'OUTSIDE');
+defined('REFRESH')          	OR define('REFRESH', 'REFRESH');
+defined('LAZYLOADING')          OR define('LAZYLOADING', 'dist/images/loading.webp');
+defined('NOIMAGE')          	OR define('NOIMAGE', 'dist/images/no-image.jpg');
+defined('USERIMAGE')          	OR define('USERIMAGE', 'dist/images/user-image.png');
+defined('CASH')             	OR define('CASH', 1);
+defined('BANK')             	OR define('BANK', 2);
+defined('DEBIT_NOTE')          	OR define('DEBIT_NOTE', 3);
+defined('CREDIT_NOTE')         	OR define('CREDIT_NOTE', 4);
+
+
 defined('DEF_ACC')             	OR define('DEF_ACC', 1);
 defined('BANK')             	OR define('BANK', 2);
 defined('DEBIT_NOTE')          	OR define('DEBIT_NOTE', 3);

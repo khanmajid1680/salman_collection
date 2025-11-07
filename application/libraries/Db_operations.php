@@ -236,14 +236,14 @@
 			// echo "<pre>"; print_r($record); exit;
 		}
 
-		function get_order_fin_year_branch_max_id($table,$field,$field2,$f_year, $field3,$branch_id,$with_gst,$gst_type)
+		function get_order_fin_year_branch_max_id($table,$field,$field2,$f_year, $field3,$branch_id,$with_gst,$gst_type,$bill_type,$bill_type_val)
 		{
-			$query = "SELECT MAX($field) as max_id FROM $table WHERE $field2 = '$f_year' AND $field3 = $branch_id AND $with_gst = $gst_type ";
+			$query = "SELECT MAX($field) as max_id FROM $table WHERE $field2 = '$f_year' AND $field3 = $branch_id AND $with_gst = $gst_type  AND $bill_type = $bill_type_val ";
 			// echo "<pre>"; print_r($query); exit;	
 			$record = $this->CI->db->query($query)->result_array();
 			if(empty($record[0]['max_id']))
 			{
-				if($gst_type==1) return 5785;
+				// if($gst_type==1) return 5785;
 				return 1;
 			}
 			else

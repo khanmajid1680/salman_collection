@@ -53,6 +53,7 @@
 						AND sm.sm_branch_id = ".$_SESSION['user_branch_id']."
 						AND sm.sm_fin_year = '".$_SESSION['fin_year']."'
 						AND st.st_trial>0
+						AND sm.sm_sales_type=0
 						$subsql
 						GROUP BY st.st_id
 						ORDER BY sm.sm_id DESC";

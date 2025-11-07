@@ -3,9 +3,12 @@ class Sales extends CI_Controller{
 	protected $master;
 	protected $trans;
 	protected $session_expired;
+	protected $menu;
+    protected $sub_menu; 
 	public function __construct(){
+		$this->menu     = 'sales'; 
+        $this->sub_menu = 'sales'; 
 		parent::__construct();
-
 		$this->master 			= 'sales_master';
 		$this->trans 			= 'sales_trans';
 		$this->session_expired  = ['status' => false, 'flag' => -1, 'data' => [], 'msg' => ''];
@@ -17,13 +20,13 @@ class Sales extends CI_Controller{
 		$this->load->library('pagination');
 		$this->config->load('extra');
 	}
-	public function index(){	 
+	public function index(){ 	 
 		if(sessionExist()){
 			if(isset($_GET['action'])){
 				if($_GET['action'] == 'view'){
 					$config 				= array();
 					$config 				= $this->config->item('pagination');	
-					$config['total_rows'] 	= $this->model->get_data(true);
+					$config['total_rows'] 	= $this->model->get_data(true,$this->menu);
 					$config['base_url'] 	= base_url("sales?search=true");
 
 					foreach ($_GET as $key => $value) 
@@ -36,19 +39,26 @@ class Sales extends CI_Controller{
 
 					$offset = (!empty($_GET['offset'])) ? $_GET['offset'] : 0;
 					$this->pagination->initialize($config);
+					
+					$record['menu']		    = $this->menu;
+                    $record['sub_menu']		= $this->sub_menu;
 
 					$record['count']		= $offset;
 					$record['total_rows'] 	= $config['total_rows'];
-					$record['data']			= $this->model->get_data(false, $config['per_page'], $offset);
+					$record['data']			= $this->model->get_data(false,$this->menu, $config['per_page'], $offset);
 					// echo "<pre>"; print_r($record); exit;
 					
 					$this->load->view('pages/sales/'.$this->master, $record);
 				}else if($_GET['action'] == 'add'){
 					$record = $this->model->get_data_for_add();
+					$record['menu']		    = $this->menu;
+                    $record['sub_menu']		= $this->sub_menu;
 					$this->load->view('pages/sales/sales_form', $record);
 				}else if($_GET['action'] == 'edit'){
 					if(isset($_GET['id']) && !empty($_GET['id'])){
 						$record = $this->model->get_data_for_edit($_GET['id']);
+						$record['menu']		    = $this->menu;
+                    	$record['sub_menu']		= $this->sub_menu;
 						$this->load->view('pages/sales/sales_form', $record);	
 					}else{
 						$this->load->view('errors/error');
@@ -60,9 +70,10 @@ class Sales extends CI_Controller{
 					}else{
 						$this->load->view('errors/error');
 					}
-				}else if($_GET['action'] == 'print2'){ 
+				}else if($_GET['action'] == 'print2'){  
 					if(isset($_GET['id']) && !empty($_GET['id'])){
 						$record = $this->model->get_data_for_print($_GET['id']);
+						// echo "<pre>"; print_r($record);die;
 						$this->load->view('pdfs/sale_print_large', $record);
 					}else{
 						$this->load->view('errors/error');
@@ -77,6 +88,12 @@ class Sales extends CI_Controller{
 			redirect('login/logout');	
 		}
 	}
+
+	public function print_api_pdf($id){ 
+		$record = $this->model->get_data_for_print($id);
+		$this->load->view('pdfs/sale_print_mini', $record);
+	}
+	
 	public function add_update($id){
 		if(!sessionExist()){
 			echo json_encode($this->session_expired);
@@ -94,6 +111,9 @@ class Sales extends CI_Controller{
 		$master_data['sm_bill_type']   		= isset($post_data['sm_bill_type']);
 
 		$master_data['sm_acc_id'] 			=  $post_data['sm_acc_id'];
+		$master_data['sm_shipping_acc_id'] 			=  isset($post_data['sm_shipping_acc_id'])?$post_data['sm_shipping_acc_id']:0;
+		$master_data['sm_transport_id'] 			=  isset($post_data['sm_transport_id'])?$post_data['sm_transport_id']:0;
+
 		$master_data['sm_user_id']			= $post_data['sm_user_id'];				
 
 		$master_data['sm_total_qty'] 		= $post_data['sm_total_qty'];
@@ -113,26 +133,21 @@ class Sales extends CI_Controller{
 		$master_data['sm_balance_amt']		= $post_data['sm_balance_amt'];		
 		$master_data['sm_notes'] 			= trim($post_data['sm_notes']);
 		$master_data['sm_allocated_amt']	= $master_data['sm_collected_amt'];
+
+		$master_data['sm_sales_type'] 	   = trim($post_data['sm_sales_type']);
+
 		$master_data['sm_updated_by'] 		= $_SESSION['user_id'];
+		$this->db->trans_begin();
+
 		
 		if($id == 0){
-
-			$master_data['sm_bill_no'] = $this->db_operations->get_order_fin_year_branch_max_id($this->master, 'sm_bill_no', 'sm_fin_year', $_SESSION['fin_year'], 'sm_branch_id', $_SESSION['user_branch_id'], 'sm_with_gst', $master_data['sm_with_gst']);
+			$master_data['sm_bill_no'] = $this->db_operations->get_order_fin_year_branch_max_id($this->master, 'sm_bill_no', 'sm_fin_year', $_SESSION['fin_year'], 'sm_branch_id', $_SESSION['user_branch_id'], 'sm_with_gst', $master_data['sm_with_gst'], 'sm_sales_type', $master_data['sm_sales_type']);
 			
-			$this->db->trans_begin();
-			if(!empty($post_data['account_mobile'])){
-				$master_data['sm_acc_id'] = $this->add_customer($post_data['account_mobile'], $post_data['account_name']);
-				if($master_data['sm_acc_id'] < 1){
-					$this->db->trans_rollback();
-					echo json_encode(['status' => true, 'flag' => 0, 'data' => [], 'msg' => 'Customer data not inserted']);
-					return;
-				}
-				$post_data['sm_acc_id'] = $master_data['sm_acc_id'];
-			}
 			$master_data['sm_created_by'] 		= $_SESSION['user_id'];
 			$master_data['sm_created_at'] 		= date('Y-m-d H:i:s');
 			$master_data['sm_fin_year'] 		= $_SESSION['fin_year'];
 			$master_data['sm_branch_id'] 		= $_SESSION['user_branch_id'];
+			// echo "<pre>"; print_r($master_data);die;
 			$id  = $this->db_operations->data_insert($this->master, $master_data);
 			$msg = 'Added successfully';
 			if($id < 1){
@@ -140,35 +155,15 @@ class Sales extends CI_Controller{
 				echo json_encode(['status' => true, 'flag' => 0, 'data' => [], 'msg' => 'Master data not inserted']);
 				return;
 			}
-
-			if($this->insert_update_trans($post_data, $id) < 1){
-				$this->db->trans_rollback();
-				echo json_encode(['status' => true, 'flag' => 0, 'data' => [], 'msg' => 'Transaction data not inserted']);
-				return;
-			}
-			// if($this->update_account_sales_date($post_data, $id) < 1){
-			// 	$this->db->trans_rollback();
-			// 	echo json_encode(['status' => true, 'flag' => 0, 'data' => [], 'msg' => 'Account Sales date not updated']);
-			// 	return;
-			// }
-			// if($this->insert_update_loyalty_point($post_data, $id) < 1){
-			// 	$this->db->trans_rollback();
-			// 	echo json_encode(['status' => true, 'flag' => 0, 'data' => [], 'msg' => 'Loyalty data not inserted']);
-			// 	return;
-			// }
-			if ($this->db->trans_status() === FALSE){
-			    $this->db->trans_rollback();
-			    echo json_encode(['status' => true, 'flag' => 0, 'data' => [], 'msg' => 'Data not inserted']);
-				return;
-		    }
-		    $this->db->trans_commit();
+			
 		}else{
 			$prev_data = $this->model->get_record(['sm_id' => $id], false);
 			if(empty($prev_data)){
+				$this->db->trans_rollback();
 				echo json_encode(['status' => true, 'flag' => 0, 'data' => [], 'msg' => 'Record not found.']);
 				return;
 			}
-			$this->db->trans_begin();
+		
 			$msg = 'Updated successfully';
 			if($this->db_operations->data_update($this->master, $master_data, 'sm_id', $id) < 1){
 				$this->db->trans_rollback();
@@ -176,26 +171,29 @@ class Sales extends CI_Controller{
 				return;
 			}
 
+		}
+
 			if($this->insert_update_trans($post_data, $id) < 1){
 				$this->db->trans_rollback();
 				echo json_encode(['status' => true, 'flag' => 0, 'data' => [], 'msg' => 'Transaction data not inserted']);
 				return;
 			}
-			
+
 			$result = $this->add_update_payment_mode($post_data, $id);
 			if(!$result['status']){
 				$this->db->trans_rollback();
 				echo json_encode(['session' => TRUE, 'status' => FALSE, 'data' => [], 'msg' => $result['msg']]);
 				return;
 			}
-
+			
 			if ($this->db->trans_status() === FALSE){
 			    $this->db->trans_rollback();
-			    echo json_encode(['status' => true, 'flag' => 0, 'data' => [], 'msg' => 'Data not updated']);
+			    echo json_encode(['status' => true, 'flag' => 0, 'data' => [], 'msg' => 'Data not inserted']);
 				return;
 		    }
+
 		    $this->db->trans_commit();
-		}
+
 		$data['id'] = $id;
 		echo json_encode(['status' => true, 'flag' => 1, 'data' => $data,  'msg' => $msg]);
 	}
@@ -234,7 +232,7 @@ class Sales extends CI_Controller{
 			$trans_data['st_sub_total_amt']	= $post_data['st_sub_total_amt'][$key];
 			
 			$trans_data['st_trial']			= isset($post_data['st_trial'][$key]);
-			$trans_data['st_dispatch_date']	= isset($post_data['st_trial'][$key]) ? $post_data['st_dispatch_date'][$key] : '';
+			$trans_data['st_dispatch_date']	= $post_data['st_dispatch_date'][$key];
 
 			$trans_data['st_pt_rate']= $this->Purchasemdl->get_purchase_rate($post_data['st_bm_id'][$key]);
 			if($value == 0){
@@ -308,7 +306,8 @@ class Sales extends CI_Controller{
 	    $post_data  = $this->input->post();
 	    $id         = $post_data['id'];
 	    $gst_type   = $post_data['sm_with_gst'];
-	    $data['sm_bill_no']  = $this->model->get_entry_no($id,$gst_type);
+	    $sales_type   = $post_data['sm_sales_type'];
+	    $data['sm_bill_no']  = $this->model->get_entry_no($id,$gst_type,$sales_type);
 		echo json_encode(['status' => true, 'data' => $data,  'msg' => 'Record fetched successfully.']);
 	}
 	public function get_data($id){

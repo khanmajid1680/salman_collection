@@ -27,6 +27,13 @@ $(document).ready(function(){
         placeholder:'STYLE',
         param:true,
     }));
+
+    $(".style_selec2").select2(select2_default({
+        url:`master/style/get_select2`,
+        placeholder:'STYLE',
+        param:true,
+    }));
+
     $("#brand_id").select2(select2_default({
         url:`master/brand/get_select2`,
         placeholder:'BRAND',
@@ -640,7 +647,9 @@ const add_purchase_row = id =>{
         let igst_amt = $('#igst_amt').val()
 
         let sub_total_amt= $('#sub_total_amt').val() 
-        let mrp         = $('#mrp').val() 
+        let mrp         = $('#mrp').val()
+        // let token_amt  = $('#token_amt').val() 
+
         let cp_code     = generate_cp_code(rate) 
         
         let data =`
@@ -716,6 +725,7 @@ const add_purchase_row = id =>{
                 <td class="floating-label">
                     <input type="text" class="form-control floating-input" id="pt_mrp_${purchase_cnt}" name="pt_mrp[]" value="${mrp}" />
                 </td>
+               
                 <td class="text-center floating-label">
                     <button type="button" class="btn btn-sm btn-primary" onclick="remove_purchase_row(${purchase_cnt})"><i class="text-danger fa fa-trash"></i></button>
                 </td>
@@ -982,4 +992,13 @@ const calculate_master_total1 = () =>{
         $('.master_block_btn').prop('disabled', true)
     } 
     set_serial_no() 
+}
+
+
+const change_gst_per = cnt => {
+    let igst_per = $('#pt_igst_per_'+cnt).val();
+    if (isNaN(igst_per) || igst_per == "") igst_per = 0;
+    $('#pt_sgst_per_'+cnt).val(parseFloat(igst_per/2));
+    $('#pt_cgst_per_'+cnt).val(parseFloat(igst_per/2));
+    calculate_master_total();
 }

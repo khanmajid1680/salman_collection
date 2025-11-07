@@ -19,6 +19,7 @@
 						AND srm.srm_created_at <= '".$this->end_date."' 
 						AND srm.srm_entry_date >= '".$from_date."'
 						AND srm.srm_entry_date <= '".$to_date."'
+						AND sm.sm_sales_type=0
 						GROUP BY srm.srm_branch_id
 					";
 			// echo "<pre>"; print_r($query); exit;
@@ -101,6 +102,7 @@
 						INNER JOIN sales_trans st ON(st.st_sm_id = sm.sm_id)
 						WHERE sm.sm_branch_id = ".$_SESSION['user_branch_id']."
 						AND sm.sm_created_at <= '".$this->end_date."'
+						AND sm.sm_sales_type=0
 						$subsql
 						GROUP BY YEAR(sm.sm_bill_date),MONTH(sm.sm_bill_date) DESC
 						HAVING 1

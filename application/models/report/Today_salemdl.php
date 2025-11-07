@@ -75,6 +75,7 @@
 						INNER JOIN style_master style ON(style.style_id = bm.bm_style_id)
 						LEFT JOIN age_master age ON(age.age_id = bm.bm_age_id)
 						WHERE bm.bm_branch_id = ".$_SESSION['user_branch_id']."
+						AND sm.sm_sales_type=0
 						$subsql
 						GROUP BY acc.account_id, design.design_id, brand.brand_id, style.style_id
 						HAVING 1

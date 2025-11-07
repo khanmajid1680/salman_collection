@@ -5,6 +5,16 @@ $(document).ready(()=>{
         placeholder:'NAME - MOBILE',
     })).on('change', ()=>get_customer_data_with_loyalty());
 
+    $("#sm_shipping_acc_id").select2(select2_default({
+        url:`master/account/get_select2_customer`,
+        placeholder:'NAME - MOBILE',
+    }));
+
+    $("#sm_transport_id").select2(select2_default({
+       url:`master/transport/get_select2/_name`,
+        placeholder:'TRANSPORT',
+    }));
+
     $("#sm_user_id").select2(select2_default({
         url:`master/person/get_select2_user`,
         placeholder:'NAME - MOBILE',
@@ -222,45 +232,26 @@ const get_customer_data_with_loyalty = () =>{
                         let exp_date    = new Date(data['acc_data'][0]['account_date'])
                         let Days        = Math.floor((today_date.getTime() - exp_date.getTime())/(1000*60*60*24));
                         if(data['acc_data'][0]['account_constant'] != 'WALKIN'){
-                            if(data['allow_disc']){
-                                if(Days > 0 && Days < 16){
-                                    $('#sm_disc_per').val(0)                
-                                    $('#sm_disc_per').prop('readonly', true)                
-                                    $('#sm_promo_per').val(5) // 5% discount                
-                                    
-                                    if(data['loyalty_point_data'].length == 1){
-                                        $('.loyalty_points_area').show()
-                                        $('#sm_point_used').val(data['loyalty_point_data'][0]['lpm_point'])    
-                                        $('#sm_point').val(data['loyalty_point_data'][0]['lpm_point'])    
-                                    }else{
-                                        $('.loyalty_points_area').hide()
-                                        $('#sm_point_used').val('') 
-                                        $('#sm_point').val('') 
-                                    }
-                                }else{
-                                    $('#sm_disc_per').val(data['acc_data'][0]['account_disc_per'])  
-                                    $('#sm_disc_per').prop('readonly', false) 
-                                    $('#sm_promo_per').val(0)               
-                                    if(data['loyalty_point_data'].length == 1){
-                                        $('.loyalty_points_area').show()
-                                        $('#sm_point_used').val(data['loyalty_point_data'][0]['lpm_point'])    
-                                        $('#sm_point').val(data['loyalty_point_data'][0]['lpm_point'])    
-                                    }else{
-                                        $('.loyalty_points_area').hide()
-                                        $('#sm_point_used').val('') 
-                                        $('#sm_point').val('') 
-                                    }
-                                } 
-                                $('#sm_gst_type').val(data['acc_data'][0]['gst_type']) 
-                            }else{
-                                $('#sm_gst_type').val(0) 
-                                $('#sm_disc_per').val(0)  
-                                $('#sm_disc_per').prop('readonly', false) 
-                                $('#sm_promo_per').val(0)               
-                                $('.loyalty_points_area').hide()
-                                $('#sm_point_used').val('') 
-                                $('#sm_point').val('')     
-                            }
+                            // if(data['allow_disc']){
+                            //     if(Days > 0 && Days < 16){
+                            //         $('#sm_disc_per').val(0)                
+                            //         $('#sm_disc_per').prop('readonly', true)    
+                                   
+                            //     }else{
+                            //         $('#sm_disc_per').val(data['acc_data'][0]['account_disc_per'])  
+                            //         $('#sm_disc_per').prop('readonly', false) 
+                            //     } 
+                            // }else{
+                            //     $('#sm_gst_type').val(0) 
+                            //     $('#sm_disc_per').val(0)  
+                            //     $('#sm_disc_per').prop('readonly', false) 
+                            //     $('#sm_promo_per').val(0)               
+                            //     $('.loyalty_points_area').hide()
+                            //     $('#sm_point_used').val('') 
+                            //     $('#sm_point').val('')     
+                            // }
+                            $('#sm_disc_per').val(data['acc_data'][0]['account_disc_per']); 
+                            $('#sm_gst_type').val(data['acc_data'][0]['gst_type']); 
                         }else{ 
                             $('#sm_gst_type').val(0) 
                             $('#sm_disc_per').val(0)  
@@ -270,7 +261,8 @@ const get_customer_data_with_loyalty = () =>{
                             $('#sm_point_used').val('') 
                             $('#sm_point').val('') 
                         }
-                        calculate_master_total();
+
+                        calculate_master_total(false);
 
                    }
                 }else{
@@ -373,7 +365,7 @@ const get_barcode_data = () =>{
 
                                         <div style="display: flex; align-items: center; gap: 5px; margin-top: 5px;" class="${trial_area}">
                                             <input type="checkbox" name="st_trial[]" id="st_trial_${sales_cnt}" value="1" />
-                                            <label for="st_trial_${sales_cnt}" style="margin: 0;">Trial</label>
+                                            <label for="st_trial_${sales_cnt}" style="margin: 0;">Trial</label> 
                                         </div> 
                                     </td>
                                     <td class="floating-label">
@@ -429,9 +421,9 @@ const get_barcode_data = () =>{
                             callToastify('success', `${data[0]['design_name']} - ${data[0]['brand_name']} ADDED`, 'right')
                             $('#bm_id').val(null).trigger('change');
                             $('#bm_id').select2('open');
-                            calculate_single_total(sales_cnt);
-                            calculate_master_total();
-                            calculate_master_from_item_disc(); 
+                            // calculate_single_total(sales_cnt);
+                            // calculate_master_total();
+                            calculate_master_from_item_disc(true); 
                             sales_cnt++;                           
                             }else{
                                 response_error(0, '')
@@ -451,7 +443,6 @@ const edit_row = cnt => {
     $('#st_disc_per_'+cnt).prop('readonly', false).focus();
     $('#st_disc_amt_'+cnt).prop('readonly', false);
     $('#st_disc_amt_'+cnt).prop('readonly', false);
-       
     $('#st_igst_per_'+cnt).prop('readonly', false);
 }
 
@@ -750,7 +741,6 @@ const calculate_master_from_item_disc = (fromDiscPer = false) => {
   if (fromDiscPer) {
     $("#sm_total_disc").val(total_disc_amt.toFixed(2));
   }
-
   calculate_master_total(false);
 };
 
@@ -775,7 +765,7 @@ const add_update_sales = id =>{
         notifier('sm_bill_date', 'Required')
         check = false;
     }
-    if($("#sm_acc_id").val() == null && $("#account_mobile").val() == ''){
+    if($("#sm_acc_id").val() == null){
         notifier('sm_acc_id', 'Required')
         check = false;
     }
@@ -783,12 +773,12 @@ const add_update_sales = id =>{
         notifier('sm_user_id', 'Required')
         check = false;
     }
-    if($("#account_mobile").val() != ''){
-        if($("#account_mobile").val().length !== 10){
-            notifier('account_mobile', 'Invalid Mobile No')
-            check = false;
-        }
-    }
+    // if($("#account_mobile").val() != ''){
+    //     if($("#account_mobile").val().length !== 10){
+    //         notifier('account_mobile', 'Invalid Mobile No')
+    //         check = false;
+    //     }
+    // }
     if($("#sm_total_qty").val() <= 0){
         notifier('sm_total_qty', 'Required')
         check = false;
@@ -986,10 +976,11 @@ const calculate_advance_amt = () => {
 };
 
 
-const get_entry_no = () => { 
-  const path = `${link}/get_entry_no`;
+const get_entry_no = () => {  
+  const path = `sales/get_entry_no`; 
+  var sm_sales_type = $("#sm_sales_type").val(); 
   var sm_with_gst = ($(`#sm_with_gst`).is(":checked") || $(`#sm_with_gst`).val() > 0) ? 1 : 0
-  const form_data = { func: "get_entry_no", id: $("#sm_id").val(), sm_with_gst };
+  const form_data = { func: "get_entry_no", id: $("#sm_id").val(), sm_with_gst,sm_sales_type };
   ajaxCall(
     "POST",
     path,
@@ -1005,4 +996,26 @@ const get_entry_no = () => {
     },
     (errmsg) => { }
   );
+};
+
+const convert_to_order = (id) => { 
+    var isConfirmed = confirm('Do you want to convert estimate into Sales?');
+      if (isConfirmed) {
+        const path = `${sub_link}/add_edit_order/${id}`;
+        ajaxCall(
+          "POST",path,'',"JSON",
+          (resp) => {
+              const { msg,flag } = resp;
+                if(flag == 1){
+                    callToastify('success', msg, 'right')
+                    $("body, html").animate({'scrollTop':0},1000);
+                    setTimeout(function(){window.location.reload(); },RELOAD_TIME); 
+                }else{
+                    response_error(flag, msg)
+                }
+          },
+          
+          (errmsg) => {}
+        );
+      }
 };

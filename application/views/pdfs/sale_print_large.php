@@ -20,60 +20,75 @@ class MYPDF extends TCPDF
 
         $tbl_header = '
 
-            <table cellpadding="0" style="border-top-color:#000;border-left-color:#000;border-right-color:#000;"> 
+                    <table cellpadding="0" style="border-top-color:#000;border-left-color:#000;border-right-color:#000;"> 
                         <br/><br/>
                         <tr>
-                            <td width="100%"style="text-align:center;font-size:20px"><h2>SALMAN COLLLECTION</h2></td>
+                            <td width="100%"style="text-align:center;font-size:20px"><h2>SALMAN COLLECTION</h2></td>
                         </tr>
                         <tr>
-                            <td width="100%"style="text-align:center;font-size:16px">48-D, Nakhuda Street, Shop No. 2, Below Beg Mohd. Baug,<br/>Mohd Ali. Road, Mumbai - 400 003, INDIA<br/>Tel (T): 022 2342 1587 / 2342 1588<br/>Mob (M): 8591691428 /9167446593 /9323988060<br/>02223421587 /02223421588<br/>FOLLOW US ON: Insta: @_.salmancollection._<br/><b>Web</b>: www.salmancollection.in</td>
+                            <td width="100%" style="text-align:center;font-size:14px; line-height:18px">
+                                48-D, Nakhuda Street, Shop No. 2, Below Beg Mohd. Baug,<br/>
+                                Mohd. Ali Road, Mumbai - 400 003, INDIA<br/>
+                                Tel (T): 022 2342 1587 / 2342 1588<br/>
+                                Mob (M): 8591691428 / 9167446593 / 9323988060<br/>
+                                FOLLOW US ON: Insta: @_.salmancollection._<br/>
+                                <b>Web</b>: www.salmancollection.in
+                            </td>
                         </tr>
                         <tr>
                             <td width="100%"  style="text-align:center;font-size:15px"><h2>'.$title.'</h2></td>
                         </tr>
                     </table>
-                    
                     <br/>
-                    <table border="1"  cellpadding="3" >
+                    <table border="1" cellpadding="4" style="font-size:13px;">
                         <tr>
-                            <td style="width:65%"><b>'.strtoupper($_SESSION['user_branch']).'</b></td>
-                            <td style="width:35%; text-align:left"><b>'.$inv_no.' NO</b> : '.$master_pdf[0]['sm_bill_no'].'</td>
+                            <td width="30%"><b>'.strtoupper($_SESSION['user_branch']).'</b></td>
+                            <td width="25%"><b>'.$inv_no.' NO:</b> '.$master_pdf[0]['sm_bill_no'].'</td>
+                            <td width="45%"><b>DATE:</b> '.date('d-m-Y',strtotime($master_pdf[0]['sm_bill_date'])).'</td>
                         </tr>
                         <tr>
-                            <td style="width:65%"></td>
-                            <td style="width:35%; text-align:left"><b>DATE </b> : '.date('d-m-Y',strtotime($master_pdf[0]['sm_bill_date'])).'</td>
+                            <td><b>SALESMAN:</b> '.$master_pdf[0]['user_fullname'].'</td>
+                            <td><b>SP. MOBILE:</b> '.$master_pdf[0]['user_mobile'].'</td>
+                            <td><b>TRANSPORT:</b> '.$master_pdf[0]['transport_name'].'</td>
                         </tr>
-                        <tr>
-                            <td style="width:65%"><b>SALESMAN :</b> '.$master_pdf[0]['user_fullname'].'</td>
-                            <td style="width:35%; text-align:left"><b>SP.MOBILE </b> : '.$master_pdf[0]['user_mobile'].'</td>
-                        </tr>
-                        <tr>
-                            <td style="width:65%"><b>CUSTOMER: </b>'.$master_pdf[0]['account_name'].'</td>
-                            <td style="width:35%; text-align:left"><b>MOBILE </b> : '.$master_pdf[0]['account_mobile'].'</td>
-                        </tr>
-                        
                     </table>
-                    <table  border="1" cellpadding="3">';
+                    <br/>
+                    <table border="1" cellpadding="5" style="font-size:13px;">
+                        <tr>
+                            <td width="50%"><b>BILL TO:</b> '.$master_pdf[0]['account_name'].'<br/>
+                                <b>Mobile:</b> '.$master_pdf[0]['account_mobile'].'<br/>
+                                 <b>Add :</b> '.nl2br($master_pdf[0]['account_address']).'<br/>
+                                <b>GSTIN : </b> '.$master_pdf[0]['account_gst_no'].'<br/>
+                            </td>
+                            <td width="50%" style="height: 115px"><b>SHIP TO:</b> '.$master_pdf[0]['shipping_account_name'].'<br/>
+                                <b>Mobile:</b> '.$master_pdf[0]['shipping_account_mobile'].'<br/>
+                                <b>Add :</b> '.nl2br($master_pdf[0]['shipping_account_address']).'<br/>
+                                <b>GSTIN : </b> '.$master_pdf[0]['shipping_account_gst_no'].'
+                            </td>
+                        </tr>
+                    </table>
+
+                <table  border="1" cellpadding="3">';
                     if($master_pdf[0]['sm_with_gst']>0){
                         $tbl_header .= '<tr style="font-size:12px;background-color:#e6e6e6;">
                                     <th style="width:4%;"><b>No</b></th>
-                                    <th style="width:14%;"><b>ITEMS CODE</b></th>
-                                    <th style="width:14%;text-align:center;"><b>PARTICULAR</b></th>
-                                    <th style="width:9%;text-align:center;"><b>QTY</b></th>
+                                    <th style="width:12%;"><b>ITEMS</b></th>
+                                    <th style="width:15%;text-align:center;"><b>STYLE</b></th>
+                                    <th style="width:11%;text-align:center;"><b>HSN</b></th>
+                                    <th style="width:7%;text-align:center;"><b>QTY</b></th>
                                     <th style="width:9%;text-align:center;"><b>RATE</b></th>
-                                    <th style="width:5%;text-align:center;"><b>PER</b></th>
                                     <th style="width:9%;text-align:center;"><b>AMT</b></th>
                                     <th style="width:9%;text-align:center;"><b>DISC</b></th>
                                     <th style="width:9%;text-align:center;"><b>TAXABLE</b></th>
-                                    <th style="width:9%;text-align:center;"><b>GST%</b></th>
+                                    <th style="width:6%;text-align:center;"><b>GST%</b></th>
                                     <th style="width:9%;text-align:center;"><b>TOTAL</b></th>
                                 </tr>';
                     }else{
 
                          $tbl_header .= '<tr style="font-size:12px;background-color:#e6e6e6;">
                                     <th style="width:4%;"><b>No</b></th>
-                                    <th style="width:17%;"><b>ITEMS CODE</b></th>
-                                    <th style="width:15%;text-align:center;"><b>PARTICULAR</b></th>
+                                    <th style="width:17%;"><b>ITEMS</b></th>
+                                    <th style="width:15%;text-align:center;"><b>STYLE</b></th>
                                     <th style="width:10%;text-align:center;"><b>QTY</b></th>
                                     <th style="width:12%;text-align:center;"><b>RATE</b></th>
                                     <th style="width:6%;text-align:center;"><b>PER</b></th>
@@ -220,33 +235,34 @@ $pdf->AddPage();
 $body .= '<table cellpadding="3" >'; 
             foreach($trans_data as $key => $value) : 
                     $cnt = $key+1;
+                    $dispatch_dt = (empty($value['dispatch_date']))?'': '<span style="font-size:11px"><br/>Del-DT :'.$value['dispatch_date'].'</span>';
 
-                if($master_pdf[0]['sm_with_gst']>0){        
-                    $body .= '<tr style="font-size:12px;">
+                if($master_pdf[0]['sm_with_gst']>0){         
+                    $body .= '<tr style="font-size:11px;">
                              <td style="width:4%;border-bottom-color:#ccc;">'.$cnt.'</td>
-                            <td style="width:14%;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['design_name'].'</td>
-                            <td style="width:14%;text-align:left;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['style_name'].'</td>
-                            <td style="width:9%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['st_qty'].'</td>
+                            <td style="width:12%;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['design_name'].$dispatch_dt.'</td>
+                            <td style="width:15%;text-align:left;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['style_name'].'</td>
+                            <td style="width:11%;text-align:left;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['hsn_name'].'</td>
+                            <td style="width:7%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['st_qty'].'</td>
                             <td style="width:9%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['st_rate'].'</td>
-                            <td style="width:5%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;">Nos</td>
                             <td style="width:9%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['st_sub_total'].'</td>
                             <td style="width:9%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['st_disc_amt'].'</td>
                             <td style="width:9%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['st_taxable_amt'].'</td>
-                            <td style="width:9%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['st_igst_per'].'</td>
-                            <td style="width:9%;text-align:right;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['st_sub_total_amt'].'</td>
+                            <td style="width:6%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['st_igst_per'].'</td>
+                            <td style="width:9%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['st_sub_total_amt'].'</td>
                         </tr>';
                 }else{
 
-                    $body .= '<tr style="font-size:12px;">
+                    $body .= '<tr style="font-size:11px;">
                              <td style="width:4%;border-bottom-color:#ccc;">'.$cnt.'</td>
-                            <td style="width:17%;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['design_name'].'</td>
+                            <td style="width:17%;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['design_name'].$dispatch_dt.'</td>
                             <td style="width:15%;text-align:left;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['style_name'].'</td>
                             <td style="width:10%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['st_qty'].'</td>
                             <td style="width:12%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['st_rate'].'</td>
                             <td style="width:6%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;">Nos</td>
                             <td style="width:12%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['st_sub_total'].'</td>
                             <td style="width:12%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['st_disc_amt'].'</td>
-                            <td style="width:12%;text-align:right;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['st_sub_total_amt'].'</td>
+                            <td style="width:12%;text-align:center;border-bottom-color:#ccc;border-left-color:#ccc;">'.$value['st_sub_total_amt'].'</td>
                         </tr>';
 
                 }

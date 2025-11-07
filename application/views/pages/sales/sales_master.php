@@ -10,21 +10,23 @@
 	$to_qty 		= (isset($_GET['to_qty'])) ? $_GET['to_qty'] : "";
 	$from_bill_amt 	= (isset($_GET['from_bill_amt'])) ? $_GET['from_bill_amt'] : "";
 	$to_bill_amt 	= (isset($_GET['to_bill_amt'])) ? $_GET['to_bill_amt'] : "";
+
+	$sales_type = ($menu=='sales') ? 0: 1;
 ?>
 <script>
-    let link = "sales";
-    let sub_link = "sales";
+    let link 		= "<?php echo $menu; ?>";
+    let sub_link 	= "<?php echo $sub_menu; ?>";
 </script>
 <section class="container-fluid sticky_top">
-	<form class="form-horizontal" id="search_form" action="<?php echo base_url('sales?action=view')?>" method="get">
+	<form class="form-horizontal" id="search_form" action="<?php echo base_url($menu.'?action=view')?>" method="get">
 		<div class="d-flex justify-content-between">
 			<nav aria-label="breadcrumb">
 			  <ol class="breadcrumb">
 			    <li class="breadcrumb-item active" aria-current="page">
-			    	SALES(<span id="count_reload"><i id="total_rows"><?php echo $total_rows;?></i></span>)
-			    </li>
+			    	<?php echo strtoupper($menu); ?>(<span id="count_reload"><i id="total_rows"><?php echo $total_rows;?></i></span>)
+			    </li> 
 			    <li class="breadcrumb-item" aria-current="add-page">
-			    	<a type="button" class="btn btn-sm btn-primary" onclick="redirectPage('sales?action=add')" data-toggle="tooltip" data-placement="bottom" title="ADD NEW"><i class="text-success fa fa-plus"></i></a >
+			    	<a type="button" class="btn btn-sm btn-primary" href="<?php echo base_url($menu.'?action=add')?>" data-toggle="tooltip" data-placement="bottom" title="ADD NEW"><i class="text-success fa fa-plus"></i></a >
 			    </li>
 			    <li class="breadcrumb-item" aria-current="search-page">
 			    	<button type="submit" class="btn btn-sm btn-primary mr-2" id="btn_search" data-toggle="tooltip" data-placement="bottom" title="SEARCH">
@@ -33,7 +35,7 @@
 					<input type="hidden" name="action" value='<?php echo $action; ?>'>
 			    </li>
 			    <li class="breadcrumb-item" aria-current="reload-page">
-			    	<a type="button" class="btn btn-sm btn-primary" onclick="redirectPage('sales?action=view')" data-toggle="tooltip" data-placement="bottom" title="REFRESH"><i class="text-info fa fa-undo"></i></a>
+			    	<a type="button" class="btn btn-sm btn-primary"  href="<?php echo base_url($menu.'?action=view')?>" data-toggle="tooltip" data-placement="bottom" title="REFRESH"><i class="text-info fa fa-undo"></i></a>
 			    </li>
 			    <li class="breadcrumb-item" aria-current="search-box">
 			    	<input type="checkbox" id="search_status" name="search_status" data-toggle="toggle" data-on="FILTER <i class='fa fa-eye'></i>" data-off="FILTER <i class='fa fa-eye-slash'></i>" data-onstyle="primary" data-offstyle="primary" data-width="100" data-size="mini" data-style="show-hide" onchange="set_search_box()" <?php echo empty($search_status) ? 'checked' : ''; ?>>
@@ -86,26 +88,6 @@
                     	<?php endif; ?>
                 	</select>
 				</div>
-				<div class="d-flex col-6 col-sm-6 col-md-4 col-lg-2">
-					<div class="floating-label">
-						<input type="number" class="form-control floating-input" id="from_qty" name="from_qty" value="<?php echo $from_qty ?>" placeholder=" " autocomplete="off"/>   
-	                    <label for="inputEmail3">FROM QTY</label>
-					</div>
-					<div class="floating-label">
-						<input type="number" class="form-control floating-input" id="to_qty" name="to_qty" value="<?php echo $to_qty ?>" placeholder=" " autocomplete="off"/>   
-	                    <label for="inputEmail3">TO QTY</label>
-					</div>
-				</div>
-				<div class="d-flex col-6 col-sm-6 col-md-4 col-lg-3">
-					<div class="floating-label">
-						<input type="number" class="form-control floating-input" id="from_bill_amt" name="from_bill_amt" value="<?php echo $from_bill_amt ?>" placeholder=" " autocomplete="off"/>   
-	                    <label for="inputEmail3">FROM BILL AMT</label>
-					</div>
-					<div class="floating-label">
-						<input type="number" class="form-control floating-input" id="to_bill_amt" name="to_bill_amt" value="<?php echo $to_bill_amt ?>" placeholder=" " autocomplete="off"/>   
-	                    <label for="inputEmail3">TO BILL AMT</label>
-					</div>
-				</div>
 			</div>
 		</div>
 		<div class="row">
@@ -117,15 +99,18 @@
 	                        <th width="5%">BILL NO</th>
 	                        <th width="7%">BILL DATE</th>
 	                        <th width="10%">CUSTOMER</th>
+	                        <th width="10%">SHIPPING</th>
 	                        <th width="10%">SALES PERSON</th>
 	                        <th width="6%">TOTAL QTY</th>
 	                        <th width="7%">SUB AMT</th>
 	                        <th width="8%">DISC</th>
 	                        <th width="6%">ROUND OFF</th>
 	                        <th width="7%">BILL AMT</th>
+	                        <?php if($sales_type==1): ?>
+	                        <th width="3%">CONVERT</th>
+	                        <?php endif; ?>
 	                        <th width="3%" align="center">PRINT</th>
 	                        <th width="3%" align="center">PRINT</th> 
-
 	                        <?php if($role == ADMIN || $role == SUPER_ADMIN): ?>
 	                        <th width="3%" align="center">EDIT</th> 
 	                        <th width="4%" align="center">DELETE</th>
@@ -146,13 +131,17 @@
 						if(!empty($data['data'])): 
 							foreach ($data['data'] as $key => $value):
                     			$id = encrypt_decrypt("encrypt", $value['sm_id'], SECRET_KEY);
-					?>
+                    			$gst_type = ($value['sm_with_gst']>0) ? 'INV' : 'EST';
+                    			$sale_type = ($value['sm_sales_type']>0) ? 'APPR/CR' : 'GEN';
+                    			$color = ($value['sm_sales_type']>0) ? '#e67b7b' : '';
+							?>
 
 								<tr>
 									<td width="3%"><?php echo $key+1; ?></td>
-									<td width="5%"><?php echo $value['sm_bill_no']; ?></td>
+									<td width="5%"><?php echo $gst_type.'- '.$value['sm_bill_no']; ?></td>
 									<td width="7%"><?php echo date('d-m-Y', strtotime($value['sm_bill_date'])); ?></td>
 									<td width="10%"><?php echo strtoupper($value['account_name']); ?></td>
+									<td width="10%"><?php echo strtoupper($value['shipping_account_name']); ?></td>
 									<td width="10%"><?php echo strtoupper($value['user_fullname']); ?></td>
 									<td width="6%"><?php echo $value['sm_total_qty']; ?></td>
 									<td width="7%"><?php echo $value['sm_sub_total']; ?></td>
@@ -162,7 +151,18 @@
 									</td>
 									<td width="6%"><?php echo $value['sm_round_off']; ?></td>
 									<td width="7%"><?php echo $value['sm_final_amt']; ?></td>
-
+									<?php if($sales_type==1): ?>
+										<td width="3%">
+												<a 
+						                            type="button" 
+						                            class="btn btn-sm" 
+						                            data-toggle="tooltip" 
+						                            data-placement="bottom" 
+						                            title="CONVERT TO ORDER"
+						                            onclick="convert_to_order(<?php echo $value['sm_id']; ?>);"
+						                        ><i class="text-info fa fa-newspaper-o"></i></a>				
+										</td>
+									<?php endif; ?>
 									<td width="3%">
 										<a type="button" class="btn btn-sm btn-primary" target="_blank" href="<?php echo base_url('sales?action=print&id='.$value['sm_id']) ?>"  title="SMALL PRINT">
 											<i class="text-info fa fa-print"></i>
@@ -175,7 +175,7 @@
 									</td>
 									<?php if($role == ADMIN || $role == SUPER_ADMIN): ?>
 									<td width="3%">
-										<a type="button" class="btn btn-sm btn-primary" onclick="redirectPage('<?php echo 'sales?action=edit&id='.$value['sm_id'] ?>')">
+										<a type="button" class="btn btn-sm btn-primary" onclick="redirectPage('<?php echo $menu.'?action=edit&id='.$value['sm_id'] ?>')">
 											<i class="text-success fa fa-edit"></i>
 										</a>										
 									</td>

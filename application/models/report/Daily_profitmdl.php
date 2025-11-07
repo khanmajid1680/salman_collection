@@ -4,25 +4,27 @@
 		protected $end_date;
 		public function __construct(){
 			parent::__construct();
-
+			$this->load->model('master/Stylemdl');
+			
 			$this->start_date 	= isset($_SESSION['start_year']) ? $_SESSION['start_year']." 00:00:01" : date('Y-m-d H:i:s');
 			$this->end_date 	= isset($_SESSION['end_year']) ? $_SESSION['end_year']." 23:59:59" : date('Y-m-d H:i:s');
-		}
-		public function get_data_for_return($from_date, $to_date){
+		}  
+		public function get_data_for_return($from_date, $to_date){  
 			$query ="
 						SELECT SUM(srt.srt_total_amt - srt.srt_pt_rate - srm.srm_bill_disc) as amt
 						FROM sales_return_master srm
 						INNER JOIN sales_return_trans srt ON(srt.srt_srm_id = srm.srm_id)
 						INNER JOIN sales_trans st ON(st.st_id = srt.srt_st_id)
-						INNER JOIN sales_master sm ON(sm.sm_id = srt.srt_sm_id)
+						INNER JOIN sales_master sm ON(sm.sm_id = srt.srt_sm_id) 
 						WHERE srm.srm_branch_id = ".$_SESSION['user_branch_id']."
 						AND srm.srm_created_at <= '".$this->end_date."' 
 						AND srm.srm_entry_date >= '".$from_date."'
 						AND srm.srm_entry_date <= '".$to_date."'
+						AND sm.sm_sales_type=0
 						GROUP BY srm.srm_branch_id
 					";
 			// echo "<pre>"; print_r($query); exit;
-			$data = $this->db->query($query)->result_array();
+			$data = $this->db->query($query)->result_array(); 
 			if(!empty($data)) return $data[0]['amt'];
 			return 0;
 		}
@@ -68,32 +70,45 @@
 			}else{
 				$subsql .= " AND sm.sm_bill_date <= '".$to_date."'";
 			}
-
+			
 			if(isset($_GET['_bill_no']) && !empty($_GET['_bill_no'])){
-				$subsql .= " AND sm.sm_bill_no = '".$_GET['_bill_no']."'";
+				$subsql .= " AND sm.sm_bill_no  = '".$_GET['_bill_no']."'";
 			}
-		
+
+			$sort = " ORDER BY sm.sm_bill_no"; 
+			if(isset($_GET['_sort_by']) && !empty($_GET['_sort_by'])){
+				$sort = " ORDER BY ".$_GET['_sort_by'].""; 
+			}
+
+			$order_by ='DESC';
+			if(isset($_GET['_order_by']) && !empty($_GET['_order_by'])){
+				$order_by = $_GET['_order_by'];
+			}
+
 			$query ="
 						SELECT DATE_FORMAT(sm.sm_bill_date, '%d-%m-%Y') as entry_date,
 						sm.sm_bill_no as entry_no, 
 						UPPER(DAYNAME(sm.sm_bill_date)) as entry_day,
 						UPPER(user.user_fullname) as user_fullname,
+						UPPER(style.style_name) as style_name,
 						SUM(sm.sm_point_used) as points,
 						SUM(st.st_qty) as st_qty, 
 						SUM(st.st_pt_rate) as pt_amt, 
 						SUM(st.st_rate) st_rate, SUM(st.st_disc_amt) as st_disc, 
 						SUM(st.st_sub_total_amt) as st_amt, SUM(st.st_sub_total_amt - st.st_pt_rate) as profit
-						FROM sales_master sm
+						FROM sales_master sm 
 						INNER JOIN sales_trans st ON(st.st_sm_id = sm.sm_id)
+						LEFT JOIN style_master style ON(style.style_id=st.st_style_id)
 						LEFT JOIN user_master user ON(user.user_id = sm.sm_user_id)
 						WHERE sm.sm_branch_id = ".$_SESSION['user_branch_id']."
 						AND sm.sm_created_at <= '".$this->end_date."'
+						AND sm.sm_sales_type=0
 						$subsql
 						GROUP BY sm.sm_id DESC
 						HAVING 1
 						$having
-						
-					";
+						$sort $order_by
+						";
 			// echo "<pre>"; print_r($query); exit;
 			$record['data'] = $this->db->query($query)->result_array();
 			// echo "<pre>"; print_r($record['data']); exit;

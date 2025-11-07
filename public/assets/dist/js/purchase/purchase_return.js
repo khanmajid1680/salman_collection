@@ -11,7 +11,7 @@ $(document).ready(()=>{
     })).on('change', ()=> get_barcode_data());
     $("#entry_no").select2(select2_default({
         url:`purchase_return/get_select2_entry_no`,
-        placeholder:'ENTRY NO',
+        placeholder:'ENTRY NO', 
     })).on('change', () => trigger_search());
     $("#acc_id").select2(select2_default({
         url:`purchase_return/get_select2_acc_id`,

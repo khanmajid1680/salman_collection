@@ -252,6 +252,22 @@
 
             return $record;   
         }
+        public function get_single_data_for_print($clause,$_id){ 
+            $barcode_query ="
+                SELECT pm.pm_entry_no, pt.pt_serial_no, bm.bm_item_code, bm.bm_sp_amt, bm.bm_cp_code, bm.bm_mrp,
+                design.design_name, brand.brand_name, acc.account_code
+                FROM purchase_master pm
+                LEFT JOIN purchase_trans pt ON(pt.pt_pm_id = pm.pm_id)
+                LEFT JOIN barcode_master bm ON(bm.bm_pt_id = pt.pt_id)
+                LEFT JOIN design_master design ON(design.design_id = bm.bm_design_id)
+                LEFT JOIN brand_master brand ON(brand.brand_id = bm.bm_brand_id)
+                LEFT JOIN account_master acc ON(acc.account_id = bm.bm_acc_id)
+                WHERE bm.bm_delete_status = 0 
+                AND ".$clause." IN ($_id)";
+            // echo "<pre>"; print_r($barcode_query); exit();
+            $record['barcode_data'] = $this->db->query($barcode_query)->result_array();
+            return $record;   
+        }
         public function get_data_for_bill_print($pm_id){
 			$query="SELECT pm.*,
                     DATE_FORMAT(pm.pm_entry_date, '%d-%m-%Y') as entry_date,
@@ -409,7 +425,7 @@
             if(empty($data)) return 0;
             return $data[0]['cnt'];
         }
-        public function get_purchase_rate($bm_id){
+        public function get_purchase_rate($bm_id){ 
             $data = $this->db_operations->get_record('barcode_master', ['bm_id' => $bm_id]);
             if(empty($data)) return 0;
             return ($data[0]['bm_pt_rate'] - $data[0]['bm_pt_disc']);

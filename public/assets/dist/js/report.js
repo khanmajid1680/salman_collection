@@ -1,5 +1,7 @@
+
 $(document).ready(function(){
-    /************** PURCHASE SUMMARY ***************/
+
+        /************** PURCHASE SUMMARY ***************/
         $("#pm_entry_no").select2(select2_default({
             url:`purchase/get_select2_entry_no`,
             placeholder:'ENTRY NO',
@@ -47,6 +49,80 @@ $(document).ready(function(){
             placeholder:'SUPPLIER',
         })).on('change', () => trigger_search());    
     /************** SALES RETURN SUMMARY ***********/
-
-
+    $(window).scrollTop(0);
 });
+
+
+let win = document.querySelector("#scroll_wrapper"); 
+let page = 1;
+let total_rows = parseInt($("#total_rows").html(), 10);
+let total_pages = Math.ceil(total_rows / PER_PAGE);
+let lastScrollTop = 0; // track last scroll position
+
+win && win.addEventListener('scroll', function() {
+    let st = win.scrollTop;
+    // Only trigger when scrolling down
+    if (st > lastScrollTop && st + win.clientHeight >= win.scrollHeight - 50) {
+        if (page <= total_pages) {
+            let offset = page * PER_PAGE;
+            let limit = PER_PAGE;
+            let path = `${base_url}/${link}/${sub_link}/get_scroll_data?offset=${offset}&limit=${limit}&${queryString}`;
+            $("#loading").show();
+            $.ajax({
+                type: 'POST',
+                url: path,
+                dataType: 'JSON',
+                success: function(resp) {      
+                    const {status, data, msg} = resp; 
+                    if (status && data.length > 0) {
+                        console.log(data)
+                        $.each(data, (inx, val) => {
+                            render(val, offset + inx);
+                        });
+                        page++; // move to next page
+
+                    }
+                    $("#loading").hide();
+                },
+                error: function(resp) {
+                    console.log(resp);
+                    $("#loading").hide();
+                }
+            });
+        }
+    }
+
+    lastScrollTop = st <= 0 ? 0 : st; // update last scroll
+});
+
+
+
+const paginate = (items, page)=>{
+  let start = PER_PAGE * page;
+  return items.slice(start, start + PER_PAGE);
+}
+
+const sorting_data = field => {
+    $('#report_wrapper').scrollTop(0);
+    let new_raw = raw.sort(dynamicSort(field));
+    $('#report_wrapper').html('');
+    page = 0
+    let data = paginate(new_raw, page);
+    if(data && data.length != 0){
+        render(data, page);
+    }
+    $(`.fa-fw`).removeClass('text-success').addClass('text-danger');
+    $(`#${field}`).removeClass('text-danger').addClass('text-success');
+
+}
+const dynamicSort = property => {
+    let sortOrder = 1;
+    if(property[0] === "-") {
+        sortOrder = -1;
+        property = property.substr(1);
+    }
+    return function (a,b) {
+        let result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+        return result * sortOrder;
+    }
+}

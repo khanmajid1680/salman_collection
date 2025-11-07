@@ -56,9 +56,10 @@ $tbl .= <<<EOD
 					<tr>
 		                <th width="3%">#</th>
                         <th width="5%">BILL NO</th>
+                        <th width="5%">TYPE</th>
                         <th width="7%">BILL DATE</th>
-                        <th width="14%">SALES PERSON</th>
-                        <th width="12%">CUSTOMER</th>
+                        <th width="11%">S-PERSON</th>
+                        <th width="10%">CUSTOMER</th>
                         <th width="5%">QTY</th>
                         <th width="9%">SUB AMT</th>
                         <th width="7%">D.AMT</th>
@@ -86,13 +87,17 @@ EOD;
 
 							$sm_round_off 	= round($value['sm_round_off'], 2);
 							$sm_final_amt 	= round($value['sm_final_amt'], 2);
+							
+							$sale_type = ($value['sm_sales_type']>0) ? 'APPR' : 'GEN';
+
 							$tbl .= <<<EOD
 							<tr>
 								<td width="3%">$sr_no</td>
 								<td width="5%">$sm_bill_no</td>
+								<td width="5%">$sale_type</td>
 								<td width="7%">$sm_bill_date</td>
-								<td width="14%">$user_fullname</td>
-								<td width="12%">$account_name</td>
+								<td width="11%">$user_fullname</td>
+								<td width="10%">$account_name</td>
 								<td width="5%">$sm_total_qty</td>
 								<td width="9%">$sm_sub_total</td>
 								<td width="7%">$sm_total_disc</td>
@@ -117,6 +122,7 @@ $off_amt 	= round($data['totals']['off_amt'], 2);
 $total_amt 	= round($data['totals']['total_amt'], 2);
 $tbl .= <<<EOD
 							<tr style="font-weight:bold;">
+								<td></td>
 								<td></td>
 								<td></td>
 								<td></td>

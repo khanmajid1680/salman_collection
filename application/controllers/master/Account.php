@@ -70,7 +70,7 @@ class Account extends CI_Controller{
 			redirect('login/logout');	
 		}
 	}
-	public function add_update($id){
+	public function add_update($id){ 
 		if(!sessionExist()){
 			echo json_encode($this->session_expired);
 			return;

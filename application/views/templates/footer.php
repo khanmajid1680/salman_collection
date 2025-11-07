@@ -36,6 +36,23 @@
 <!-- Select2 -->
 <script src="<?php echo assets('plugins/select2/js/select2.min.js')?>"></script>
 
+
+<script type="text/javascript">
+	// const locat 			= window.location;
+	// const base_url 			= locat.protocol + "//" + locat.host + "/" + locat.pathname.split("/")[1];
+	
+	const SALES 			= "<?php echo SALES; ?>";
+	const DISPATCH 			= "<?php echo DISPATCH; ?>";
+	const WITHIN 			= "<?php echo WITHIN; ?>";
+	const OUTSIDE 			= "<?php echo OUTSIDE; ?>";
+	const REFRESH 			= "<?php echo REFRESH; ?>";
+	const PER_PAGE 			= "<?php echo PER_PAGE; ?>";
+	const NOIMAGE 			= "<?php echo assets(NOIMAGE); ?>";
+	const USERIMAGE 		= "<?php echo assets(USERIMAGE); ?>";
+	const LAZYLOADING 		= "<?php echo assets(LAZYLOADING); ?>";
+	// const RELOAD_TIME 		= 800;
+</script>
+
 <!-- Custom JS files. Note: Keep the sequence of following custom files -->
 <script src="<?php echo assets('dist/js/custom/constants.js')?>"></script>
 <script src="<?php echo assets('dist/js/custom/notify.js')?>"></script>

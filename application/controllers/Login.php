@@ -74,7 +74,7 @@
 			$session_data['user_role'] 		= $user[0]['user_role'];
 			$session_data['user_name'] 		= $user[0]['user_name'];
 			$session_data['user_fullname'] 	= $user[0]['user_fullname'];
-			$session_data['user_branch_id'] = $user[0]['user_branch_id'];
+			$session_data['user_branch_id'] = $user[0]['user_branch_id']; 
 			$session_data['user_branch'] 	= $this->Branchmdl->get_name(['branch_id' => $user[0]['user_branch_id']]);
 			$session_data['fin_year'] 		= $post_data['fin_year'];
 			$session_data['start_year'] 	= $this->get_fin_year($post_data['fin_year']);

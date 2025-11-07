@@ -32,7 +32,7 @@
 			}
 			if(isset($_GET['bm_design_id']) && !empty($_GET['bm_design_id'])){
 				$subsql .=" AND bm.bm_design_id = ".$_GET['bm_design_id'];
-				$record['search']['bm_design_id'] = $this->designmdl->get_search(['design_id' => $_GET['bm_design_id']]);
+				$record['search']['bm_design_id'] = $this->Designmdl->get_search(['design_id' => $_GET['bm_design_id']]);
 			}
 			if(isset($_GET['bm_brand_id']) && !empty($_GET['bm_brand_id'])){
 				$subsql .=" AND bm.bm_brand_id = ".$_GET['bm_brand_id'];

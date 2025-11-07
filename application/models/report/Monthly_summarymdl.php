@@ -12,6 +12,7 @@
 						WHERE sm.sm_branch_id = ".$_SESSION['user_branch_id']."
 						AND sm.sm_fin_year = '".$_SESSION['fin_year']."' 
 						AND sm.sm_bill_date = '".$date."'
+						AND sm.sm_sales_type=0
 						GROUP BY sm.sm_bill_date
 					";
 			// echo "<pre>"; print_r($query); exit;
@@ -75,7 +76,8 @@
 								SELECT sm.sm_bill_date as entry_date
 								FROM sales_master sm
 								WHERE sm.sm_branch_id = ".$_SESSION['user_branch_id']."
-								AND sm.sm_fin_year = '".$_SESSION['fin_year']."' 
+								AND sm.sm_fin_year = '".$_SESSION['fin_year']."'
+								AND sm.sm_sales_type=0 
 								GROUP BY sm.sm_bill_date
 								UNION
 								SELECT srm.srm_entry_date as entry_date

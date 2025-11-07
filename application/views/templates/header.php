@@ -120,6 +120,9 @@
 					          		<a id="SUPPLIER" class="dropdown-item my-2" href="<?php echo base_url('master/account?action=view&type=SUPPLIER'); ?>">
 					          			SUPPLIER
 					          		</a>
+					          		<a id="transport" class="dropdown-item my-2" href="<?php echo base_url('master/transport?action=view'); ?>">
+					          			TRANSPORT
+					          		</a>
 				        			</div>
 				        			<div class="col-12 col-sm-12 col-md-4 col-lg-4">
 				        				<a id="city" class="dropdown-item my-2" href="<?php echo base_url('master/city?action=view'); ?>">
@@ -193,16 +196,25 @@
                     PURCHASE RETURN
                   </a>
                 </li>
-			  			<?php endif; ?>
-			  			<?php if($role == SUPER_ADMIN || $role == ADMIN || $role == SALES): ?>
-			  				<li class="nav-item" id="sales">
+	  			<?php endif; ?>
+	  			<?php if($role == SUPER_ADMIN || $role == ADMIN || $role == SALES): ?>
+	  				<li class="nav-item" id="sales">
                   <a class="nav-link" href="<?php echo base_url('sales?action=view')?>">
                     SALES
                   </a>
                 </li>
-			  			<?php endif; ?>
-			  			<?php if($role == SUPER_ADMIN || $role == ADMIN || $role == SALES): ?>
-			  				<li class="nav-item" id="sales_return">
+	  			<?php endif; ?>
+
+	  			<?php if($role == SUPER_ADMIN || $role == ADMIN || $role == SALES): ?>
+	  				<li class="nav-item" id="approval">
+                  <a class="nav-link" href="<?php echo base_url('approval?action=view')?>">
+                    APPROVAL/CREDIT
+                  </a>
+                </li>
+	  			<?php endif; ?>
+
+	  			<?php if($role == SUPER_ADMIN || $role == ADMIN || $role == SALES): ?>
+	  				<li class="nav-item" id="sales_return">
                   <a class="nav-link" href="<?php echo base_url('sales_return?action=view')?>">
                     SALES RETURN
                   </a>
@@ -373,6 +385,12 @@
 							          			NON MOVING STOCK
 							          		</a>
 							          		<?php endif; ?>
+							          		<?php if($role == SUPER_ADMIN || $role == ADMIN): ?>
+							          		<a id="token_report_profit" class="dropdown-item my-2" href="<?php echo base_url('report/token_report_profit?action=view'); ?>">
+							          			TOKEN SALE REPORT
+							          		</a>
+							          		<?php endif; ?>
+
 						        			</div>
 						        			<div class="col-12 col-sm-12 col-md-4 col-lg-4">
 						        				<?php if($role == SUPER_ADMIN || $role == ADMIN): ?>
@@ -380,11 +398,17 @@
 							          			PAYMENT REMINDER
 							          		</a>
 							          		<?php endif; ?>
-						        				<?php if($role == SUPER_ADMIN || $role == ADMIN): ?>
-							          		<a id="purchase_summary" class="dropdown-item my-2" href="<?php echo base_url('report/purchase_summary?action=view'); ?>">
-							          			PURCHASE SUMMARY
-							          		</a>
+						        			<?php if($role == SUPER_ADMIN || $role == ADMIN): ?>
+								          		<a id="purchase_summary" class="dropdown-item my-2" href="<?php echo base_url('report/purchase_summary?action=view'); ?>">
+								          			PURCHASE SUMMARY
+								          		</a>
 							          		<?php endif; ?>
+							          		<?php if($role == SUPER_ADMIN || $role == ADMIN): ?>
+								          		<a id="purchase_summary_itemwise" class="dropdown-item my-2" href="<?php echo base_url('report/purchase_summary_itemwise?action=view'); ?>">
+								          			PURCHASE SUMMARY ( ITEMWISE )
+								          		</a>
+							          		<?php endif; ?>
+
 							          		<?php if($role == SUPER_ADMIN || $role == ADMIN): ?>
 							          		<a id="purchase_return_summary" class="dropdown-item my-2" href="<?php echo base_url('report/purchase_return_summary?action=view'); ?>">
 							          			PURCHASE RETURN SUMMARY
@@ -394,6 +418,11 @@
 							          		<a id="sales_summary" class="dropdown-item my-2" href="<?php echo base_url('report/sales_summary?action=view'); ?>">
 							          			SALES SUMMARY
 							          		</a>
+							          		<?php endif; ?>
+							          		<?php if($role == SUPER_ADMIN || $role == ADMIN): ?>
+								          		<a id="sales_summary_itemwise" class="dropdown-item my-2" href="<?php echo base_url('report/sales_summary_itemwise?action=view'); ?>">
+								          			SALES SUMMARY ( ITEMWISE )
+								          		</a>
 							          		<?php endif; ?>
 							          		<?php if($role == SUPER_ADMIN || $role == ADMIN): ?>
 							          		<a id="sales_return_summary" class="dropdown-item my-2" href="<?php echo base_url('report/sales_return_summary?action=view'); ?>">

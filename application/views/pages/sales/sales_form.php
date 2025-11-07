@@ -4,24 +4,21 @@
     $bill_type = (!empty($master_data) && ($master_data[0]['sm_bill_type'] == 0))  ? '' : 'checked';
     $gst_type  = (!empty($master_data) && ($master_data[0]['sm_gst_type'] == 1))  ? 1 : 0;
     $id        = (!empty($master_data)) ? $master_data[0]['sm_id'] : 0;
+    // $sales_type = (!empty($master_data)) ? $master_data[0]['sm_sales_type'] : 0;
+    $sales_type = ($menu=='sales') ? 0: 1;
 
 
 ?>
 <script>
-    let link = "sales";
-    let sub_link = "sales";
+    let link        = "<?php echo $menu; ?>"; 
+    let sub_link    = "<?php echo $sub_menu; ?>";
 </script>
 <section class="d-flex justify-content-between sticky_top">
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="<?php echo base_url('sales?action=view'); ?>">SALES</a></li>
+        <li class="breadcrumb-item"><a href="<?php echo base_url($menu.'?action=view'); ?>"><?php echo strtoupper($menu); ?></a></li>
         <li class="breadcrumb-item active" aria-current="page"><?php echo empty($master_data) ? 'ADD' : 'EDIT'; ?></li>
-        <!-- <li class="breadcrumb-item" aria-current="save-page">
-            <button type="button" class="btn btn-sm btn-primary master_block_btn" onclick="add_update_sales(<?php echo empty($master_data) ? 0 : $master_data[0]['sm_id']; ?>)" data-toggle="tooltip" data-placement="bottom" title="SAVE" tabindex="10" <?php echo empty($master_data) ? 'disabled="disabled"' : '' ?>><i class="text-success fa fa-save"></i></button>
-        </li> -->
-        <!-- <li class="breadcrumb-item" aria-current="cancel-page">
-            <a type="button" class="btn btn-sm btn-primary" href="<?php echo base_url('sales?action=view')?>" data-toggle="tooltip" data-placement="bottom" title="CANCEL" tabindex="11"><i class="text-danger fa fa-close"></i></a>
-        </li> -->
+      
       </ol>
     </nav>
 </section>
@@ -45,14 +42,14 @@
                                 data-width="130" 
                                 data-size="small" 
                                 <?php echo (!empty($master_data) && $master_data[0]['isExist']) ? 'disabled' : 'onchange="set_bill_type()"' ?>
-                                <?php echo $bill_type; ?>
-                            />
+                                <?php echo $bill_type; ?>/>
                         </div>
                         <input type="hidden" name="sm_id" id="sm_id" value="<?php echo $id?>">
                     </div>
 					<div class="card-body">
 						<div class="d-flex flex-wrap mt-2 form-group floating-form">
-							  <input type="hidden"
+							<input type="hidden" name="sm_sales_type" id="sm_sales_type" value="<?php echo $sales_type ?>" readonly>
+                            <input type="hidden"
                                     id="sm_gst_type"
                                     name="sm_gst_type"
                                     value="<?php echo $gst_type; ?>"/>
@@ -67,8 +64,11 @@
                                 <small class="form-text text-muted helper-text" id="sm_bill_date_msg"></small>
 							</div>
 							<div class="col-sm-12 col-md-6 col-lg-5 floating-label">
-                                <p for="inputEmail3">
-                                    EXISTING CUSTOMER&nbsp;<span class="text-danger">*</span>&nbsp;&nbsp;
+                               <p for="inputEmail3">
+                                    CUSTOMER&nbsp;<span class="text-danger">*</span>&nbsp;&nbsp;
+                                    <?php if(empty($master_data)): ?>
+                                        <span><a style="cursor: pointer;" onclick="account_popup(0, 'CUSTOMER', 'sm_acc_id')" data-toggle="tooltip" data-placement="top" title="ADD CUSTOMER"><i class="text-success fa fa-plus"></i></a></span>
+                                    <?php endif; ?>
                                 </p>
                                 <select class="form-control floating-select" id="sm_acc_id" name="sm_acc_id" placeholder=" " tabindex="1" onchange="validate_dropdown(this)" <?php echo (!empty($master_data) && $master_data[0]['isExist']) ? 'disabled' : '' ?>>
                                     <?php if(!empty($master_data)): ?>
@@ -85,40 +85,64 @@
                                         <?php endif; ?>
                                 </select>
                                 <small class="form-text text-muted helper-text" id="sm_acc_id_msg"></small>
-							</div>
+							</div> 
                             <div class="col-sm-12 col-md-6 col-lg-4 floating-label">
-                                <?php if(empty($master_data)): ?>
-                                    <input type="number" class="form-control floating-input" id="account_mobile" name="account_mobile" value="" placeholder=" " tabindex="2" onkeyup="set_mobile_no(this, true)" onfocusout="validate_mobile_no(this, true)" />   
-                                <?php else: ?>
-                                    <input type="number" class="form-control floating-input" id="account_mobile" name="account_mobile" value="" placeholder=" " tabindex="2" readonly="readonly" />   
-                                <?php endif; ?>
-                                <label for="inputEmail3">NEW CUST. MOBILE NO<span id="account_mobile_length">(10)</span></label>
-                                <small class="form-text text-muted helper-text" id="account_mobile_msg"></small>
-                            </div>
-                            <div class="col-sm-12 col-md-6 col-lg-4 floating-label">
-                                <input type="text" class="form-control floating-input" id="account_name" name="account_name" value="" placeholder=" " tabindex="3" autocomplete="off" <?php echo empty($master_data) ? '' : 'readonly'; ?>/>   
-                                <label for="inputEmail3">NEW CUST. NAME</label>
-                                <small class="form-text text-muted helper-text" id="account_name_msg"></small>
-                            </div>
-							<div class="col-sm-12 col-md-6 col-lg-4 floating-label">
                                 <p for="inputEmail3">SALES PERSON&nbsp;<span class="text-danger">*</span></p>
                                 <select class="form-control floating-select" id="sm_user_id" name="sm_user_id" placeholder=" " tabindex="4" onchange="validate_dropdown(this)" <?php echo (!empty($master_data) && $master_data[0]['isExist']) ? 'disabled' : '' ?>>
                                     <?php if(!empty($master_data)): ?>
                                         <option value="<?php echo $master_data[0]['sm_user_id'] ?>" selected>
                                             <?php echo $master_data[0]['user_fullname']; ?> 
                                         </option>
+                                    <?php if(!empty($master_data) && $master_data[0]['isExist']):?>
                                         <input type="hidden" name="sm_user_id" value="<?php echo $master_data[0]['sm_user_id'] ?>">
+                                     <?php endif; ?>    
                                     <?php endif; ?>
                                 </select>
                                 <small class="form-text text-muted helper-text" id="sm_user_id_msg"></small>
-							</div>
+                            </div>
+                            <div class="col-sm-12 col-md-6 col-lg-5 floating-label">
+                               <p for="inputEmail3">
+                                    SHIPPING CUSTOMER&nbsp;<span class="text-danger">*</span>&nbsp;&nbsp;
+                                    <?php if(empty($master_data)): ?>
+                                        <span><a style="cursor: pointer;" onclick="account_popup(0, 'CUSTOMER', 'sm_shipping_acc_id')" data-toggle="tooltip" data-placement="top" title="ADD SHIPPING CUSTOMER"><i class="text-success fa fa-plus"></i></a></span>
+                                    <?php endif; ?>
+                                </p>
+                                <select class="form-control floating-select" id="sm_shipping_acc_id" name="sm_shipping_acc_id" placeholder=" " tabindex="1" onchange="validate_dropdown(this)" <?php echo (!empty($master_data) && $master_data[0]['isExist']) ? 'disabled' : '' ?>>
+                                    <?php if(!empty($master_data)): ?>
+                                            <option value="<?php echo $master_data[0]['sm_shipping_acc_id'] ?>" selected>
+                                                <?php echo $master_data[0]['shipping_account_name'].' - '.$master_data[0]['shipping_account_mobile']; ?> 
+                                            </option>
+                                           <?php if(!empty($master_data) && $master_data[0]['isExist']): ?> 
+                                                <input type="hidden" name="sm_shipping_acc_id" value="<?php echo $master_data[0]['sm_shipping_acc_id'] ?>">
+                                                </option>
+                                            <?php endif; ?>
+                                        <?php else: ?>    
+                                         <option value="<?php echo $walkin[0]['account_id'] ?>" selected>
+                                                <?php echo strtoupper($walkin[0]['account_name']); ?>    
+                                        <?php endif; ?>
+                                </select>
+                                <small class="form-text text-muted helper-text" id="sm_shipping_acc_id_msg"></small>
+                            </div> 
+                            <div class="col-sm-12 col-md-6 col-lg-4 floating-label">
+                                <p for="inputEmail3">TRANPORT&nbsp;</p>
+                                <select class="form-control floating-select" id="sm_transport_id" name="sm_transport_id" placeholder=" " tabindex="4" onchange="validate_dropdown(this)" <?php echo (!empty($master_data) && $master_data[0]['isExist']) ? 'disabled' : '' ?>>
+                                    <?php if(!empty($master_data)): ?>
+                                        <option value="<?php echo $master_data[0]['sm_transport_id'] ?>" selected>
+                                            <?php echo $master_data[0]['transport_name']; ?> 
+                                        </option>
+                                    <?php if(!empty($master_data) && $master_data[0]['isExist']):?>
+                                        <input type="hidden" name="sm_transport_id" value="<?php echo $master_data[0]['sm_transport_id'] ?>">
+                                     <?php endif; ?>    
+                                    <?php endif; ?>
+                                </select>
+                                <small class="form-text text-muted helper-text" id="sm_transport_id_msg"></small>
+                            </div>
                             <div class="col-sm-12 col-md-6 col-lg-4 floating-label">
                                 <p for="inputEmail3">BARCODE</p>
                                 <select class="form-control floating-select select2" id="bm_id" placeholder="" tabindex="5">                                                
                                 </select>
                                 <small class="form-text text-muted helper-text" id="bm_id_msg"></small>
                             </div>
-                            
                             <div class="col-sm-12 col-md-6 floating-label">
                                 <textarea class="form-control floating-input" id="sm_notes" name="sm_notes" placeholder=" " autocomplete="off" tabindex="7" rows="3"><?php echo (empty($master_data)?'':$master_data[0]['sm_notes'])?></textarea>
                                 <label for="inputEmail3">NOTES</label>
@@ -234,7 +258,7 @@
                             </div>
                             <div class="col-sm-12 col-md-4 col-lg-6 floating-label">
                                 <button type="button" class="btn btn-md btn-primary master_block_btn mr-1" onclick="add_update_sales(<?php echo empty($master_data) ? 0 : $master_data[0]['sm_id']; ?>)" data-toggle="tooltip" data-placement="bottom" title="SAVE" tabindex="10" <?php echo empty($master_data) ? 'disabled="disabled"' : '' ?>><i class="text-success fa fa-save font-weight-bold"> SAVE</i></button>
-                                <a type="button" class="btn btn-md btn-primary" href="<?php echo base_url('sales?action=view')?>" data-toggle="tooltip" data-placement="bottom" title="CANCEL" tabindex="11"><i class="text-danger fa fa-close font-weight-bold"> CANCEL</i></a>
+                                <a type="button" class="btn btn-md btn-primary" href="<?php echo base_url($menu.'?action=view')?>" data-toggle="tooltip" data-placement="bottom" title="CANCEL" tabindex="11"><i class="text-danger fa fa-close font-weight-bold"> CANCEL</i></a>
                             </div>                        
                            
 						</div>
@@ -413,8 +437,8 @@
           <div id="payment_mode_wrapper"><?php $this->load->view('templates/panel/right'); ?></div>
 	</form>
 </section>
-<?php $this->load->view('templates/footer'); ?>
-<script src="<?php echo assets('dist/js/sales/sales.js?v=8')?>"></script>
+<?php $this->load->view('templates/footer'); ?> 
+<script src="<?php echo assets('dist/js/sales/sales.js?v=11')?>"></script>
 <script src="<?php echo assets('dist/js/master/account.js?v=1')?>"></script>
 <script type="text/javascript"> get_payment_mode_data();</script>
 <?php 

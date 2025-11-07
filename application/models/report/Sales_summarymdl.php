@@ -53,9 +53,14 @@
                 $subsql .=" AND sm.sm_payment_mode = '".$_GET['sm_payment_mode']."'";
                 $record['search']['sm_payment_mode'] = $this->Commonmdl->get_mode($_GET['sm_payment_mode']);
             }
+
+            if(isset($_GET['_sale_type']) && $_GET['_sale_type']!=''){
+                $subsql .=" AND sm.sm_sales_type = '".$_GET['_sale_type']."'";
+            }
             
 			$query ="
 						SELECT sm.*, 
+						CONCAT(IF(sm.sm_with_gst=1,'INV','EST'),'-',sm.sm_bill_no) as sm_bill_no,	
 						(sm.sm_sgst_amt + sm.sm_cgst_amt + sm.sm_igst_amt) as gst_amt,
 						CONCAT(UPPER(acc.account_name), ' - ', acc.account_mobile) as account_name, user.user_fullname
 						FROM sales_master sm
@@ -63,6 +68,7 @@
 						INNER JOIN user_master user ON(user.user_id = sm.sm_user_id)
 						WHERE sm.sm_branch_id = ".$_SESSION['user_branch_id']."
 						AND sm.sm_fin_year = '".$_SESSION['fin_year']."'
+						AND sm.sm_sales_type=0
 						$subsql
 						ORDER BY sm.sm_id DESC
 					";
